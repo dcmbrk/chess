@@ -36,7 +36,7 @@ grow_vertical = 2
 metadata/_edit_lock_ = true
 
 [node name="Background" type="TextureRect" parent="." unique_id=1092766110]
-modulate = Color(0.33333334, 0.49803922, 0.5568628, 1)
+modulate = Color(0.14509805, 0.16470589, 0.27058825, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -85,3 +85,23 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_f5cn0")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_w2hs4")
 theme_override_styles/hover = SubResource("StyleBoxFlat_naxqw")
 text = "Quit"
+
+[node name="Label" type="Label" parent="." unique_id=473370819]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -147.0
+offset_top = 112.0
+offset_right = 147.0
+offset_bottom = 162.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.33333334, 0.49803922, 0.5568628, 1)
+theme_override_constants/outline_size = 16
+theme_override_constants/shadow_outline_size = 16
+theme_override_font_sizes/font_size = 48
+text = "goat chess game"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
