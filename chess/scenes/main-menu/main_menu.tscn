@@ -1,30 +1,14 @@
 [gd_scene format=3 uid="uid://bojjrywgqj3gd"]
 
 [ext_resource type="Texture2D" uid="uid://bwa57wopd40ky" path="res://assets/images/ui/background.jpg" id="1_fusrs"]
+[ext_resource type="Script" uid="uid://c0is8e4c5i27u" path="res://scenes/main-menu/main_menu.gd" id="1_qhk2d"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f5cn0"]
-bg_color = Color(0.18431373, 0.23921569, 0.33333334, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 8
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fusrs"]
+bg_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w2hs4"]
-bg_color = Color(0.14509805, 0.16470589, 0.27058825, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 8
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qhk2d"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_naxqw"]
-bg_color = Color(0.23137255, 0.29803923, 0.37254903, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 8
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lasye"]
 
 [node name="MainMenu" type="Control" unique_id=456939105]
 layout_mode = 3
@@ -33,10 +17,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_lock_ = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_qhk2d")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1092766110]
-modulate = Color(0.14509805, 0.16470589, 0.27058825, 1)
+modulate = Color(0.3786467, 0.41701248, 0.6126803, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -46,62 +32,43 @@ grow_vertical = 2
 texture = ExtResource("1_fusrs")
 expand_mode = 3
 stretch_mode = 6
-metadata/_edit_lock_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1310945975]
+[node name="Buttons" type="VBoxContainer" parent="Background" unique_id=450562302]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -121.0
-offset_top = -94.5
-offset_right = 121.0
-offset_bottom = 94.5
+offset_left = -12.5
+offset_top = -15.0
+offset_right = 12.5
+offset_bottom = 15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PlayButton" type="Button" parent="VBoxContainer" unique_id=1021788203]
-custom_minimum_size = Vector2(100, 60)
+[node name="Play" type="Button" parent="Background/Buttons" unique_id=1683787479]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_f5cn0")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_w2hs4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_naxqw")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_fusrs")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qhk2d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lasye")
 text = "Play"
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer" unique_id=1298488064]
-custom_minimum_size = Vector2(100, 60)
+[node name="Settings" type="Button" parent="Background/Buttons" unique_id=751048952]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_f5cn0")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_w2hs4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_naxqw")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_fusrs")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qhk2d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lasye")
 text = "Settings"
 
-[node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=1592130306]
-custom_minimum_size = Vector2(100, 60)
+[node name="Quit" type="Button" parent="Background/Buttons" unique_id=1993230022]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_f5cn0")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_w2hs4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_naxqw")
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_fusrs")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qhk2d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lasye")
 text = "Quit"
 
-[node name="Label" type="Label" parent="." unique_id=473370819]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -147.0
-offset_top = 112.0
-offset_right = 147.0
-offset_bottom = 162.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.33333334, 0.49803922, 0.5568628, 1)
-theme_override_constants/outline_size = 16
-theme_override_constants/shadow_outline_size = 16
-theme_override_font_sizes/font_size = 48
-text = "goat chess game"
-horizontal_alignment = 1
-vertical_alignment = 1
-uppercase = true
+[connection signal="pressed" from="Background/Buttons/Play" to="." method="_on_play_pressed"]

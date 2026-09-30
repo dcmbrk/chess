@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://u1qjdot2v7ep"]
+
+[ext_resource type="Texture2D" uid="uid://cgetgswp32rmu" path="res://assets/sprites/piece.png" id="1_0gcah"]
+[ext_resource type="Script" uid="uid://ct31546jpg57d" path="res://scenes/pieces/piece.gd" id="1_gr5wq"]
+[ext_resource type="Resource" uid="uid://ucokdn5hlxig" path="res://data/pieces/white_pawn.tres" id="2_o3pew"]
+[ext_resource type="Script" uid="uid://duc4d2hjhyibi" path="res://components/drag_and_drop.gd" id="4_mkiv8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0gcah"]
+size = Vector2(8, 8)
+
+[node name="Piece" type="Area2D" unique_id=1518674752]
+position = Vector2(4, 4)
+script = ExtResource("1_gr5wq")
+stats = ExtResource("2_o3pew")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1969283550]
+shape = SubResource("RectangleShape2D_0gcah")
+
+[node name="Skin" type="Sprite2D" parent="." unique_id=422919070]
+texture = ExtResource("1_0gcah")
+region_enabled = true
+region_rect = Rect2(0, 16, 8, 8)
+
+[node name="DragAndDrop" type="Node" parent="." unique_id=560081720 node_paths=PackedStringArray("target")]
+script = ExtResource("4_mkiv8")
+target = NodePath("..")
+metadata/_custom_type_script = "uid://duc4d2hjhyibi"
+
+[connection signal="drop" from="DragAndDrop" to="." method="_on_drag_and_drop_drop"]
