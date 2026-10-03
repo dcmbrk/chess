@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="PieceStats" format=3 uid="uid://ucokdn5hlxig"]
+[gd_resource type="Resource" script_class="UnitStats" format=3 uid="uid://ucokdn5hlxig"]
 
-[ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/piece_stats.gd" id="1_b5fxe"]
+[ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/unit_stats.gd" id="1_tbelb"]
 
 [resource]
-script = ExtResource("1_b5fxe")
-sprite_coordinates = Vector2i(0, 2)
+script = ExtResource("1_tbelb")
+skin_coordinates = Vector2i(0, 2)
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"

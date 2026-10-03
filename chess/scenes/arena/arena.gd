@@ -1,6 +1,6 @@
 class_name Arena
 extends Node2D
 
-const TILE_SIZE := 8
-const TILE_HALF_SIZE := TILE_SIZE / 2
-const TILE_QUART_SIZE := TILE_SIZE / 4
+const CELL_SIZE := Vector2(8, 8)
+const HALF_CELL_SIZE := Vector2(4, 4)
+const QUARTER_CELL_SIZE := Vector2(2, 2)

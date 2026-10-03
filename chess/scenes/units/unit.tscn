@@ -11,7 +11,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0gcah"]
 size = Vector2(8, 8)
 
-[node name="Unit" type="Area2D" unique_id=1518674752]
+[node name="Unit" type="Area2D" unique_id=1518674752 groups=["units"]]
 position = Vector2(4, 4)
 script = ExtResource("1_44d7s")
 stats = ExtResource("2_o3pew")
