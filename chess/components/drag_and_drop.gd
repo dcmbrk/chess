@@ -1,10 +1,11 @@
 class_name DragAndDrop
 extends Node
 
-signal drag
-signal drop(start_position: Vector2)
+signal started
+signal canceled(start_position: Vector2)
+signal dropped(start_position: Vector2)
 
-@export var enable := true
+@export var enabled := true
 @export var target: Area2D
 enum STATES { IDLE, DRAGGING }
 var state: STATES = STATES.IDLE
@@ -20,7 +21,7 @@ func _process(delta: float) -> void:
 		target.global_position = target.get_global_mouse_position() + offset
 
 func _on_target_input_event(viewport: Node, event: InputEvent):
-	if not enable:
+	if not enabled:
 		return
 		
 	var dragging_object := get_tree().get_first_node_in_group("dragging")
@@ -36,12 +37,12 @@ func _start_dragging() -> void:
 	starting_position = target.global_position
 	offset =  target.global_position - target.get_global_mouse_position()
 	state = STATES.DRAGGING
-	drag.emit()
+	started.emit()
 	target.z_index = 99
 	target.add_to_group("dragging")
 	
 func _end_dragging() -> void:
 	state = STATES.IDLE
-	drop.emit(starting_position)
+	dropped.emit(starting_position)
 	target.remove_from_group("dragging")
 	target.z_index = 0

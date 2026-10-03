@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://u1qjdot2v7ep"]
+
+[ext_resource type="Texture2D" uid="uid://cgetgswp32rmu" path="res://assets/sprites/piece.png" id="1_0gcah"]
+[ext_resource type="Material" uid="uid://bb8m5fhpi4wqn" path="res://assets/shaders/2d_outline_shader.tres" id="1_3w4go"]
+[ext_resource type="Script" uid="uid://ct31546jpg57d" path="res://scenes/units/unit.gd" id="1_44d7s"]
+[ext_resource type="Resource" uid="uid://ucokdn5hlxig" path="res://data/pieces/white_pawn.tres" id="2_o3pew"]
+[ext_resource type="Script" uid="uid://duc4d2hjhyibi" path="res://components/drag_and_drop.gd" id="4_mkiv8"]
+[ext_resource type="Script" uid="uid://07jbv3fgt04j" path="res://components/velocity_based_rotation.gd" id="5_htf8o"]
+[ext_resource type="Script" uid="uid://bd5cnewgg1tfi" path="res://components/outline_highlighter.gd" id="6_scp0i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0gcah"]
+size = Vector2(8, 8)
+
+[node name="Unit" type="Area2D" unique_id=1518674752]
+position = Vector2(4, 4)
+script = ExtResource("1_44d7s")
+stats = ExtResource("2_o3pew")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1969283550]
+shape = SubResource("RectangleShape2D_0gcah")
+
+[node name="Visuals" type="CanvasGroup" parent="." unique_id=1331217698]
+material = ExtResource("1_3w4go")
+
+[node name="Skin" type="Sprite2D" parent="Visuals" unique_id=422919070]
+unique_name_in_owner = true
+texture = ExtResource("1_0gcah")
+region_enabled = true
+region_rect = Rect2(0, 16, 8, 8)
+
+[node name="VelocityBasedRotation" type="Node" parent="." unique_id=91727580 node_paths=PackedStringArray("target")]
+script = ExtResource("5_htf8o")
+target = NodePath("../Visuals/Skin")
+x_velocity_threshold = 1.0
+metadata/_custom_type_script = "uid://07jbv3fgt04j"
+
+[node name="OutlineHighlighter" type="Node" parent="." unique_id=1988387880 node_paths=PackedStringArray("visuals")]
+script = ExtResource("6_scp0i")
+visuals = NodePath("../Visuals")
+outline_color = Color(0.2509804, 0.5686275, 0.42352942, 1)
+outline_thickness = 3
+metadata/_custom_type_script = "uid://bd5cnewgg1tfi"
+
+[node name="DragAndDrop" type="Node" parent="." unique_id=560081720 node_paths=PackedStringArray("target")]
+script = ExtResource("4_mkiv8")
+target = NodePath("..")
+metadata/_custom_type_script = "uid://duc4d2hjhyibi"
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
