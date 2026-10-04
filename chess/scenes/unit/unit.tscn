@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cgetgswp32rmu" path="res://assets/sprites/piece.png" id="1_0gcah"]
 [ext_resource type="Material" uid="uid://bb8m5fhpi4wqn" path="res://assets/shaders/2d_outline_shader.tres" id="1_3w4go"]
-[ext_resource type="Script" uid="uid://ct31546jpg57d" path="res://scenes/units/unit.gd" id="1_44d7s"]
+[ext_resource type="Script" uid="uid://ct31546jpg57d" path="res://scenes/unit/unit.gd" id="1_44d7s"]
 [ext_resource type="Resource" uid="uid://ucokdn5hlxig" path="res://data/pieces/white_pawn.tres" id="2_o3pew"]
 [ext_resource type="Script" uid="uid://duc4d2hjhyibi" path="res://components/drag_and_drop.gd" id="4_mkiv8"]
 [ext_resource type="Script" uid="uid://07jbv3fgt04j" path="res://components/velocity_based_rotation.gd" id="5_htf8o"]

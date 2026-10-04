@@ -2,12 +2,13 @@
 
 [ext_resource type="TileSet" uid="uid://gsy51mcdujch" path="res://assets/sprites/sprites.tres" id="1_1qjuf"]
 [ext_resource type="Script" uid="uid://brh4p6rthcivm" path="res://scenes/arena/arena.gd" id="1_8trdl"]
-[ext_resource type="PackedScene" uid="uid://u1qjdot2v7ep" path="res://scenes/units/unit.tscn" id="3_5tue2"]
+[ext_resource type="PackedScene" uid="uid://u1qjdot2v7ep" path="res://scenes/unit/unit.tscn" id="3_5tue2"]
 [ext_resource type="Script" uid="uid://y8w4rb0qd04q" path="res://components/play_area.gd" id="3_asdgj"]
 [ext_resource type="Script" uid="uid://6omh2knjq23j" path="res://components/unit_grid.gd" id="4_aj7ud"]
 [ext_resource type="Script" uid="uid://c3w2pswmywe0l" path="res://components/tile_highlighter.gd" id="6_jx0ua"]
 [ext_resource type="Resource" uid="uid://m82e80nd41rv" path="res://data/pieces/white_knight.tres" id="7_ii07k"]
 [ext_resource type="Script" uid="uid://cmjxdk0g3g2pg" path="res://components/unit_mover.gd" id="7_u52cf"]
+[ext_resource type="Script" uid="uid://c3kvvpgst77kx" path="res://components/unit_spawner.gd" id="9_6w4xk"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -98,3 +99,9 @@ size = Vector2i(1, 6)
 script = ExtResource("7_u52cf")
 play_areas = [NodePath("../Board"), NodePath("../Bench")]
 metadata/_custom_type_script = "uid://cmjxdk0g3g2pg"
+
+[node name="UnitSpawner" type="Node" parent="." unique_id=750164866 node_paths=PackedStringArray("bench", "game_area")]
+script = ExtResource("9_6w4xk")
+bench = NodePath("../Bench")
+game_area = NodePath("../Board")
+metadata/_custom_type_script = "uid://c3kvvpgst77kx"

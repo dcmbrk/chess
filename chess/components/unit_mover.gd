@@ -76,7 +76,6 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
 	
-	# swap units if we have to
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_unit: Unit = new_area.unit_grid.units[new_tile]
 		new_area.unit_grid.remove_unit(new_tile)
