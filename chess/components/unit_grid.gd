@@ -52,5 +52,16 @@ func get_all_units() -> Array[Unit]:
 	for unit: Unit in units.values():
 		if unit:
 			unit_array.append(unit)
-	
+
 	return unit_array
+
+
+func to_board_state() -> BoardState:
+	var board := BoardState.new(size)
+
+	for tile: Vector2i in units:
+		var unit := units[tile] as Unit
+		if unit and unit.stats:
+			board.set_piece(tile, unit.stats)
+
+	return board

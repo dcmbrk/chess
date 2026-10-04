@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://m82e80nd41rv" path="res://data/pieces/white_knight.tres" id="7_ii07k"]
 [ext_resource type="Script" uid="uid://cmjxdk0g3g2pg" path="res://components/unit_mover.gd" id="7_u52cf"]
 [ext_resource type="Script" uid="uid://c3kvvpgst77kx" path="res://components/unit_spawner.gd" id="9_6w4xk"]
+[ext_resource type="Script" uid="uid://wopted37y6qy" path="res://components/move_highlighter.gd" id="10_mvhl"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -43,6 +44,10 @@ play_area = NodePath("..")
 highlight_layer = NodePath("../Highlight")
 tile = Vector2i(11, 0)
 metadata/_custom_type_script = "uid://c3w2pswmywe0l"
+
+[node name="MoveHints" type="TileMapLayer" parent="Board"]
+modulate = Color(0.4, 1, 0.5, 0.6)
+tile_set = ExtResource("1_1qjuf")
 
 [node name="BoardUnitGrid" type="Node2D" parent="Board" unique_id=1325008972]
 script = ExtResource("4_aj7ud")
@@ -99,6 +104,13 @@ size = Vector2i(1, 6)
 script = ExtResource("7_u52cf")
 play_areas = [NodePath("../Board"), NodePath("../Bench")]
 metadata/_custom_type_script = "uid://cmjxdk0g3g2pg"
+
+[node name="MoveHighlighter" type="Node" parent="." node_paths=PackedStringArray("play_area", "hint_layer")]
+script = ExtResource("10_mvhl")
+play_area = NodePath("../Board")
+hint_layer = NodePath("../Board/MoveHints")
+tile = Vector2i(11, 0)
+metadata/_custom_type_script = "uid://wopted37y6qy"
 
 [node name="UnitSpawner" type="Node" parent="." unique_id=750164866 node_paths=PackedStringArray("bench", "game_area")]
 script = ExtResource("9_6w4xk")

@@ -4,5 +4,6 @@
 
 [resource]
 script = ExtResource("1_mwxdd")
+type = 1
 skin_coordinates = Vector2i(2, 2)
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"
