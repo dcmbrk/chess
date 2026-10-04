@@ -1,8 +1,6 @@
 extends GutTest
 
-const ARENA = preload("res://scenes/arena/arena.tscn")
 const BATTLE_RESULT = preload("res://scenes/ui/battle_result/battle_result.tscn")
-const UNIT = preload("res://scenes/unit/unit.tscn")
 const WHITE_PAWN = preload("res://data/pieces/white_pawn.tres")
 const Outcome := GameRules.Outcome
 
@@ -72,20 +70,16 @@ func test_continue_after_loss_resets_run() -> void:
 
 
 func test_arena_shows_rewards_when_last_enemy_is_captured() -> void:
-	var arena: Arena = ARENA.instantiate()
-	add_child_autofree(arena)
+	var arena := ArenaHelper.create_arena(self)
 	var grid := arena.board.unit_grid
-	arena.preparation.start_battle()
 	
 	# Leave a single black pawn on (1, 1) and attack it from (2, 2).
 	for tile in [Vector2i(2, 1), Vector2i(3, 1)]:
 		var unit: Unit = grid.units[tile]
 		grid.remove_unit(tile)
 		unit.free()
-	var attacker: Unit = UNIT.instantiate()
-	grid.add_child(attacker)
-	attacker.stats = WHITE_PAWN
-	grid.add_unit(Vector2i(2, 2), attacker)
+	var attacker := ArenaHelper.place_unit(arena, Vector2i(2, 2), WHITE_PAWN)
+	arena.preparation.start_battle()
 	
 	arena.unit_mover.perform_board_move(attacker, Vector2i(2, 2), Vector2i(1, 1))
 	

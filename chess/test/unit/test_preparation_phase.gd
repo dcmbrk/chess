@@ -1,10 +1,10 @@
 extends GutTest
 
-const ARENA = preload("res://scenes/arena/arena.tscn")
 const UNIT = preload("res://scenes/unit/unit.tscn")
 const BLACK_PAWN = preload("res://data/pieces/black_pawn.tres")
 
-# Arena layout: white pawn on (0, 4), black pawns on (1..3, 1), white knight on the bench.
+# Arena layout: black pawns on (1..3, 1). The test moves the white pawn from the
+# bench to (0, 4) and leaves the white knight on the bench.
 var arena: Arena
 var preparation: PreparationPhase
 var grid: UnitGrid
@@ -13,12 +13,11 @@ var bench_knight: Unit
 
 
 func before_each() -> void:
-	arena = ARENA.instantiate()
-	add_child_autofree(arena)
+	arena = ArenaHelper.create_arena(self)
 	preparation = arena.preparation
 	grid = arena.board.unit_grid
-	white_pawn = grid.units[Vector2i(0, 4)]
-	bench_knight = arena.get_node("Bench/Piece")
+	bench_knight = arena.get_node("Bench").unit_grid.units[Vector2i(0, 1)]
+	white_pawn = ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(0, 4))
 
 
 func _place_unit(tile: Vector2i, stats: UnitStats) -> Unit:

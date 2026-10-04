@@ -1,6 +1,5 @@
 extends GutTest
 
-const ARENA = preload("res://scenes/arena/arena.tscn")
 const UNIT = preload("res://scenes/unit/unit.tscn")
 const BLACK_PAWN = preload("res://data/pieces/black_pawn.tres")
 
@@ -11,8 +10,7 @@ var hints: TileMapLayer
 
 
 func before_each() -> void:
-	arena = ARENA.instantiate()
-	add_child_autofree(arena)
+	arena = ArenaHelper.create_arena(self)
 	board = arena.get_node("Board")
 	highlighter = arena.get_node("MoveHighlighter")
 	hints = board.get_node("MoveHints")

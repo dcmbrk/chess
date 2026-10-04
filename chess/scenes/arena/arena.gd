@@ -14,6 +14,7 @@ const QUARTER_CELL_SIZE := Vector2(2, 2)
 @onready var preparation: PreparationPhase = $PreparationPhase
 @onready var prep_panel: PrepPanel = $PrepPanel
 @onready var enemy_zone_overlay: EnemyZoneOverlay = $Board/EnemyZoneOverlay
+@onready var graveyard_panel: GraveyardPanel = $GraveyardPanel
 
 var captured_enemies := 0
 
@@ -26,6 +27,10 @@ func _ready() -> void:
 	preparation.pieces_changed.connect(prep_panel.update_pieces)
 	preparation.battle_started.connect(_on_battle_started)
 	prep_panel.go_pressed.connect(preparation.start_battle)
+	graveyard_panel.closed.connect(get_tree().reload_current_scene)
+	
+	for piece in RunState.pieces:
+		unit_spawner.spawn_unit(piece)
 	
 	preparation.start()
 
@@ -36,7 +41,9 @@ func _on_battle_started() -> void:
 
 
 func _on_unit_captured(unit: Unit) -> void:
-	if unit.stats.team != preparation.player_team:
+	if unit.stats.team == preparation.player_team:
+		RunState.lose_piece(unit.stats)
+	else:
 		captured_enemies += 1
 
 
@@ -47,5 +54,9 @@ func _on_battle_ended(result: GameRules.Result) -> void:
 
 
 func _on_battle_result_closed() -> void:
+	if not RunState.graveyard.is_empty():
+		graveyard_panel.open()
+		return
+	
 	# TODO: go to the shop instead once it exists.
 	get_tree().reload_current_scene()

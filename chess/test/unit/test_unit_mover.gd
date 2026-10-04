@@ -1,6 +1,5 @@
 extends GutTest
 
-const ARENA = preload("res://scenes/arena/arena.tscn")
 const UNIT = preload("res://scenes/unit/unit.tscn")
 const WHITE_PAWN = preload("res://data/pieces/white_pawn.tres")
 
@@ -12,8 +11,8 @@ var turn_manager: TurnManager
 
 
 func before_each() -> void:
-	arena = ARENA.instantiate()
-	add_child_autofree(arena)
+	arena = ArenaHelper.create_arena(self)
+	ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(0, 4))
 	board = arena.get_node("Board")
 	grid = board.unit_grid
 	unit_mover = arena.unit_mover
@@ -32,7 +31,6 @@ func _place_unit(tile: Vector2i, stats: UnitStats) -> Unit:
 
 
 func test_units_placed_in_scene_are_registered_in_grid() -> void:
-	assert_eq(grid.units[Vector2i(0, 4)], arena.get_node("Board/Piece"))
 	assert_eq(grid.units[Vector2i(1, 1)], arena.get_node("Board/BlackPawn1"))
 
 

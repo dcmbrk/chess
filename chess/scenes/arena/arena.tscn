@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://y8w4rb0qd04q" path="res://components/play_area.gd" id="3_asdgj"]
 [ext_resource type="Script" uid="uid://6omh2knjq23j" path="res://components/unit_grid.gd" id="4_aj7ud"]
 [ext_resource type="Script" uid="uid://c3w2pswmywe0l" path="res://components/tile_highlighter.gd" id="6_jx0ua"]
-[ext_resource type="Resource" uid="uid://m82e80nd41rv" path="res://data/pieces/white_knight.tres" id="7_ii07k"]
 [ext_resource type="Script" uid="uid://cmjxdk0g3g2pg" path="res://components/unit_mover.gd" id="7_u52cf"]
 [ext_resource type="Script" uid="uid://c3kvvpgst77kx" path="res://components/unit_spawner.gd" id="9_6w4xk"]
 [ext_resource type="Script" uid="uid://wopted37y6qy" path="res://components/move_highlighter.gd" id="10_mvhl"]
@@ -18,6 +17,7 @@
 [ext_resource type="Script" uid="uid://c08luuwjdbua8" path="res://components/enemy_zone_overlay.gd" id="16_zone"]
 [ext_resource type="PackedScene" path="res://scenes/ui/prep_panel/prep_panel.tscn" id="17_ppnl"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="18_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/graveyard/graveyard_panel.tscn" id="19_grav"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -43,9 +43,6 @@ tile_highlighter = NodePath("TileHighlighter")
 [node name="EnemyZoneOverlay" type="Node2D" parent="Board"]
 script = ExtResource("16_zone")
 metadata/_custom_type_script = "uid://c08luuwjdbua8"
-
-[node name="Piece" parent="Board" unique_id=725347935 instance=ExtResource("3_5tue2")]
-position = Vector2(4, 36)
 
 [node name="BlackPawn1" parent="Board" instance=ExtResource("3_5tue2")]
 position = Vector2(12, 12)
@@ -84,9 +81,6 @@ tile_set = ExtResource("1_1qjuf")
 script = ExtResource("3_asdgj")
 unit_grid = NodePath("BenchUnitGrid")
 tile_highlighter = NodePath("TileHighlighter")
-
-[node name="Piece" parent="Bench" unique_id=1518674752 instance=ExtResource("3_5tue2")]
-stats = ExtResource("7_ii07k")
 
 [node name="Highlight" type="TileMapLayer" parent="Bench" unique_id=982483817]
 tile_set = ExtResource("1_1qjuf")
@@ -167,3 +161,5 @@ metadata/_custom_type_script = "uid://c3kvvpgst77kx"
 [node name="PrepPanel" parent="." instance=ExtResource("17_ppnl")]
 
 [node name="Hud" parent="." instance=ExtResource("18_hud")]
+
+[node name="GraveyardPanel" parent="." instance=ExtResource("19_grav")]

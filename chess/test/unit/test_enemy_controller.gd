@@ -1,7 +1,5 @@
 extends GutTest
 
-const ARENA = preload("res://scenes/arena/arena.tscn")
-
 var arena: Arena
 var grid: UnitGrid
 var enemy: EnemyController
@@ -9,8 +7,8 @@ var turn_manager: TurnManager
 
 
 func before_each() -> void:
-	arena = ARENA.instantiate()
-	add_child_autofree(arena)
+	arena = ArenaHelper.create_arena(self)
+	ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(0, 4))
 	grid = arena.get_node("Board").unit_grid
 	enemy = arena.get_node("EnemyController")
 	enemy.think_delay = 0.0
