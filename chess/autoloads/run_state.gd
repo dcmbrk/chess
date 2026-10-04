@@ -213,6 +213,7 @@ func buy_offer(index: int) -> bool:
 	
 	money -= shop_offers[index].price
 	pieces.append(shop_offers[index])
+	Progress.discover(shop_offers[index])
 	shop_offers[index] = null
 	shop_locks[index] = false
 	return true
@@ -267,6 +268,7 @@ func buy_gambit(index: int) -> bool:
 	
 	money -= gambit_offers[index].price
 	gambits.append(gambit_offers[index])
+	Progress.discover(gambit_offers[index])
 	gambit_offers[index] = null
 	gambits_changed.emit()
 	return true

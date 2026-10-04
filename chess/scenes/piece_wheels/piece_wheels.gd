@@ -25,6 +25,9 @@ var _spin_index := 0
 
 
 func _ready() -> void:
+	# The wheels open every new run.
+	Progress.record_run_started()
+	Progress.record_stage(RunState.stage)
 	for i in REEL_COUNT:
 		results.append(WeightedRandom.pick(pool, weights, RunState.rng))
 	
@@ -75,6 +78,7 @@ func _on_action_button_pressed() -> void:
 		return
 	
 	RunState.pieces = results.duplicate()
+	Progress.discover_all(results)
 	finished.emit()
 	if next_scene:
 		get_tree().change_scene_to_file(next_scene)

@@ -60,6 +60,7 @@ func _ready() -> void:
 	if boss:
 		boss.setup_battle(self)
 		boss_label.show_boss(boss)
+		Progress.discover(boss)
 	
 	preparation.start()
 
@@ -94,11 +95,13 @@ func _on_battle_result_closed() -> void:
 		return
 	
 	if RunState.advance():
+		Progress.record_run_won()
 		# TODO: show a victory screen.
 		RunState.reset()
 		get_tree().change_scene_to_file("res://scenes/main-menu/main_menu.tscn")
 		return
 	
+	Progress.record_stage(RunState.stage)
 	if not RunState.graveyard.is_empty():
 		graveyard_panel.open()
 		return

@@ -28,11 +28,9 @@ func test_quit_quits() -> void:
 	assert_true(menu.quit_button.pressed.is_connected(get_tree().quit))
 
 
-func test_collection_is_disabled_with_a_hint() -> void:
-	assert_true(menu.collection_button.disabled)
-	menu.collection_button.mouse_entered.emit()
-	assert_eq(Tooltip.body.text, "Coming soon")
-	menu.collection_button.mouse_exited.emit()
+func test_collection_is_available() -> void:
+	assert_false(menu.collection_button.disabled)
+	assert_true(menu.collection_button.pressed.is_connected(menu._on_collection_pressed))
 
 
 func test_settings_button_opens_the_settings() -> void:

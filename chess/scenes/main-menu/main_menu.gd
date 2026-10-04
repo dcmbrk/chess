@@ -1,6 +1,7 @@
 extends Control
 
 const PIECE_WHEELS_SCENE := "res://scenes/piece_wheels/piece_wheels.tscn"
+const COLLECTION_SCENE := "res://scenes/collection/collection_screen.tscn"
 
 @onready var play_button: Button = %PlayButton
 @onready var settings_button: Button = %SettingsButton
@@ -20,11 +21,14 @@ func _ready() -> void:
 	quit_button.pressed.connect(get_tree().quit)
 	settings_button.pressed.connect(settings_panel.open)
 	
-	# TODO: enable once the collection screen exists.
-	collection_button.disabled = true
-	Tooltip.attach(collection_button, collection_button.text, "", "Coming soon")
+	collection_button.pressed.connect(_on_collection_pressed)
 
 
 func _on_play_pressed() -> void:
 	RunState.reset()
 	get_tree().change_scene_to_file(PIECE_WHEELS_SCENE)
+
+
+func _on_collection_pressed() -> void:
+	Tooltip.hide_tooltip()
+	get_tree().change_scene_to_file(COLLECTION_SCENE)
