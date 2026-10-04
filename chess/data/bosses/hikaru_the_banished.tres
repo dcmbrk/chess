@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="BanStockBoss" format=3]
+
+[ext_resource type="Script" path="res://data/bosses/ban_stock_boss.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+display_name = "Hikaru the Banished"
+description = "You can't use your Stock during the battle."

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CursedTilesBoss" format=3]
+
+[ext_resource type="Script" path="res://data/bosses/cursed_tiles_boss.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+display_name = "Tal the Cursed"
+description = "Places 5 CURSED tiles on the board. Your pieces can't enter them."
+count = 5

@@ -6,6 +6,13 @@ extends RefCounted
 
 var size: Vector2i
 
+## CURSED tiles: tile -> the UnitStats.Team that may not enter it.
+var forbidden_tiles: Dictionary[Vector2i, int] = {}
+## STASIS: pieces on these tiles can't move and can't be captured.
+var frozen_tiles: Dictionary[Vector2i, bool] = {}
+## Teams that can still put a Stock piece on the board, which counts as a move.
+var can_deploy: Dictionary[int, bool] = {}
+
 var _pieces: Dictionary[Vector2i, UnitStats] = {}
 
 
@@ -49,3 +56,11 @@ func is_empty(tile: Vector2i) -> bool:
 func is_enemy(tile: Vector2i, team: UnitStats.Team) -> bool:
 	var piece := get_piece(tile)
 	return piece != null and piece.team != team
+
+
+func is_forbidden(tile: Vector2i, team: UnitStats.Team) -> bool:
+	return forbidden_tiles.get(tile, -1) == team
+
+
+func is_frozen(tile: Vector2i) -> bool:
+	return frozen_tiles.has(tile)

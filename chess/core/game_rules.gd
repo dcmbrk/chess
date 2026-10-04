@@ -41,8 +41,9 @@ static func has_king(board: BoardState, team: UnitStats.Team) -> bool:
 	return false
 
 
+## Moving a piece or putting a Stock piece on the board both count.
 static func has_legal_moves(board: BoardState, team: UnitStats.Team) -> bool:
-	return not MoveRules.get_all_moves(board, team).is_empty()
+	return board.can_deploy.get(team, false) or not MoveRules.get_all_moves(board, team).is_empty()
 
 
 static func is_defeated(board: BoardState, team: UnitStats.Team, needs_king: bool) -> bool:

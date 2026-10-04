@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="EnemyFirstBoss" format=3]
+
+[ext_resource type="Script" path="res://data/bosses/enemy_first_boss.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+display_name = "Magnus the Swift"
+description = "The boss moves first."

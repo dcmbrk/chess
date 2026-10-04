@@ -211,6 +211,9 @@ func test_screen_disables_what_the_player_cannot_afford() -> void:
 
 
 func test_clicking_an_offer_buys_it() -> void:
+	# Locked offers survive the restock done when the screen opens.
+	_offer_everything(WHITE_KNIGHT)
+	RunState.shop_locks = [true, true, true]
 	RunState.money = 10
 	var screen := _create_screen()
 	var piece := RunState.shop_offers[0]

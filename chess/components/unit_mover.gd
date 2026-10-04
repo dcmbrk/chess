@@ -2,12 +2,20 @@ class_name UnitMover
 extends Node
 
 signal unit_captured(unit: Unit, by: Unit)
+## The player's pawn reached the last row; call [method finish_promotion] with one of [param options].
+signal promotion_requested(unit: Unit, options: Array[Resource])
 
 @export var play_areas: Array[PlayArea]
 @export var board: PlayArea
 @export var turn_manager: TurnManager
 @export var player_team := UnitStats.Team.WHITE
 @export var preparation: PreparationPhase
+## Lets the player put Stock (bench) pieces on the board during a battle.
+@export var allow_stock_in_battle := true
+## Asks the player which piece their pawn becomes. When off, it becomes [member UnitStats.promotes_to].
+@export var ask_player_promotion := false
+
+var _pending_promotion: Unit
 
 
 func _ready() -> void:
@@ -39,7 +47,7 @@ func can_drag(unit: Unit) -> bool:
 	if unit.stats.team != player_team:
 		return false
 	if _is_battle_active():
-		return turn_manager.current_team == player_team
+		return turn_manager.current_team == player_team and not is_waiting_for_promotion()
 	return _is_preparing()
 
 
@@ -64,11 +72,106 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 	
 	_move_unit(unit, board, to)
 	var promotion := MoveRules.get_promotion(board_state, unit.stats, to)
+	if promotion and _should_ask_promotion(unit):
+		# The turn ends once the player picked the new piece.
+		_pending_promotion = unit
+		_update_draggable_units()
+		promotion_requested.emit(unit, unit.stats.promotion_options)
+		return true
 	if promotion:
 		unit.promote(promotion)
 	
-	turn_manager.end_turn(board.unit_grid.to_board_state())
+	turn_manager.end_turn(get_rules_board())
 	return true
+
+
+func is_waiting_for_promotion() -> bool:
+	return _pending_promotion != null
+
+
+func finish_promotion(choice: UnitStats) -> void:
+	assert(is_waiting_for_promotion(), "No promotion to finish!")
+	assert(choice in _pending_promotion.stats.promotion_options, "Not a promotion option!")
+	
+	_pending_promotion.promote(choice)
+	_pending_promotion = null
+	turn_manager.end_turn(get_rules_board())
+
+
+func _should_ask_promotion(unit: Unit) -> bool:
+	return ask_player_promotion and unit.stats.team == player_team \
+			and not unit.stats.promotion_options.is_empty()
+
+
+## Puts a Stock (bench) unit on an empty tile of the player's rows during a
+## battle. It counts as the player's move. Returns false if it isn't allowed.
+func perform_deploy(unit: Unit, to: Vector2i) -> bool:
+	if not can_deploy(unit, to):
+		return false
+	
+	for play_area in play_areas:
+		if play_area == board:
+			continue
+		for tile: Vector2i in play_area.unit_grid.units:
+			if play_area.unit_grid.units[tile] == unit:
+				play_area.unit_grid.remove_unit(tile)
+	
+	_move_unit(unit, board, to)
+	turn_manager.end_turn(get_rules_board())
+	return true
+
+
+func can_deploy(unit: Unit, to: Vector2i) -> bool:
+	return _can_use_stock() \
+			and unit.stats.team == player_team \
+			and turn_manager.current_team == player_team \
+			and not is_waiting_for_promotion() \
+			and _is_in_stock(unit) \
+			and _is_free_deploy_tile(to)
+
+
+## The board as the rules see it, including whether the player can still deploy.
+func get_rules_board() -> BoardState:
+	var board_state := board.unit_grid.to_board_state()
+	board_state.can_deploy[player_team] = _can_deploy_any()
+	return board_state
+
+
+func _can_use_stock() -> bool:
+	return allow_stock_in_battle and _is_battle_active() and preparation != null \
+			and preparation.count_player_pieces() < preparation.max_pieces
+
+
+func _is_in_stock(unit: Unit) -> bool:
+	for play_area in play_areas:
+		if play_area != board and unit in play_area.unit_grid.get_all_units():
+			return true
+	return false
+
+
+func _is_free_deploy_tile(tile: Vector2i) -> bool:
+	return preparation.is_in_player_zone(tile) \
+			and not board.unit_grid.is_tile_occupied(tile) \
+			and board.unit_grid.forbidden_tiles.get(tile, -1) != player_team
+
+
+func _can_deploy_any() -> bool:
+	if not _can_use_stock():
+		return false
+	
+	var has_stock := false
+	for play_area in play_areas:
+		if play_area == board:
+			continue
+		for unit in play_area.unit_grid.get_all_units():
+			has_stock = has_stock or unit.stats.team == player_team
+	if not has_stock:
+		return false
+	
+	for tile: Vector2i in board.unit_grid.units:
+		if _is_free_deploy_tile(tile):
+			return true
+	return false
 
 
 func _is_battle_active() -> bool:
@@ -158,9 +261,13 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 	var new_tile := new_area.get_hovered_tile()
 	
 	if _is_battle_active() and (old_area == board or new_area == board):
-		var is_board_move := old_area == board and new_area == board
-		var is_player_unit := unit.stats.team == player_team
-		if not is_board_move or not is_player_unit or not perform_board_move(unit, old_tile, new_tile):
+		var done := false
+		if unit.stats.team == player_team and new_area == board:
+			if old_area == board:
+				done = perform_board_move(unit, old_tile, new_tile)
+			else:
+				done = perform_deploy(unit, new_tile)
+		if not done:
 			_reset_unit_to_starting_position(starting_position, unit)
 		return
 	

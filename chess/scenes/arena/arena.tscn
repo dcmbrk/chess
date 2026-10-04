@@ -18,6 +18,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/graveyard/graveyard_panel.tscn" id="19_grav"]
 [ext_resource type="Script" uid="uid://eghqcdvyqsn6" path="res://components/unit_seller.gd" id="20_sell"]
 [ext_resource type="Script" uid="uid://cbygrc4du3x7u" path="res://components/unit_tooltip.gd" id="21_info"]
+[ext_resource type="Script" uid="uid://cvv5r1btrdipp" path="res://components/cursed_tiles_overlay.gd" id="22_curs"]
+[ext_resource type="PackedScene" path="res://scenes/ui/promotion/promotion_panel.tscn" id="23_prom"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -43,6 +45,11 @@ tile_highlighter = NodePath("TileHighlighter")
 [node name="EnemyZoneOverlay" type="Node2D" parent="Board" unique_id=1535219564]
 script = ExtResource("16_zone")
 metadata/_custom_type_script = "uid://c08luuwjdbua8"
+
+[node name="CursedTilesOverlay" type="Node2D" parent="Board" node_paths=PackedStringArray("unit_grid")]
+script = ExtResource("22_curs")
+unit_grid = NodePath("../BoardUnitGrid")
+metadata/_custom_type_script = "uid://cvv5r1btrdipp"
 
 [node name="Highlight" type="TileMapLayer" parent="Board" unique_id=176524095]
 tile_set = ExtResource("1_1qjuf")
@@ -122,12 +129,14 @@ play_areas = [NodePath("../Board"), NodePath("../Bench")]
 board = NodePath("../Board")
 turn_manager = NodePath("../TurnManager")
 preparation = NodePath("../PreparationPhase")
+ask_player_promotion = true
 metadata/_custom_type_script = "uid://cmjxdk0g3g2pg"
 
-[node name="MoveHighlighter" type="Node" parent="." unique_id=455729553 node_paths=PackedStringArray("play_area", "hint_layer")]
+[node name="MoveHighlighter" type="Node" parent="." unique_id=455729553 node_paths=PackedStringArray("play_area", "hint_layer", "unit_mover")]
 script = ExtResource("10_mvhl")
 play_area = NodePath("../Board")
 hint_layer = NodePath("../Board/MoveHints")
+unit_mover = NodePath("../UnitMover")
 tile = Vector2i(11, 0)
 metadata/_custom_type_script = "uid://wopted37y6qy"
 
@@ -162,3 +171,5 @@ metadata/_custom_type_script = "uid://c3kvvpgst77kx"
 [node name="Hud" parent="." unique_id=1082565460 instance=ExtResource("18_hud")]
 
 [node name="GraveyardPanel" parent="." unique_id=1267382530 instance=ExtResource("19_grav")]
+
+[node name="PromotionPanel" parent="." instance=ExtResource("23_prom")]

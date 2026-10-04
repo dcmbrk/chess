@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="StockDestroyerBoss" format=3]
+
+[ext_resource type="Script" path="res://data/bosses/stock_destroyer_boss.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+display_name = "Jawby Fisher"
+description = "When the boss captures a piece, it destroys a random piece in your Stock."

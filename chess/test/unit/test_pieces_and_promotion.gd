@@ -121,17 +121,76 @@ func test_ai_values_promotion_and_restores_the_board() -> void:
 
 # --- Promotion in the arena ---
 
-func test_unit_promotes_when_reaching_last_row() -> void:
+func _arena_with_pawn_about_to_promote() -> Array:
 	var arena := ArenaHelper.create_arena(self)
 	var pawn := ArenaHelper.place_unit(arena, Vector2i(0, 1), _load("white", "pawn"))
 	arena.preparation.start_battle()
+	return [arena, pawn]
+
+
+func test_promotion_waits_for_the_player_choice() -> void:
+	var setup := _arena_with_pawn_about_to_promote()
+	var arena: Arena = setup[0]
+	var pawn: Unit = setup[1]
 	
 	assert_true(arena.unit_mover.perform_board_move(pawn, Vector2i(0, 1), Vector2i(0, 0)))
 	
-	assert_eq(pawn.stats, _load("white", "queen"))
+	assert_true(arena.unit_mover.is_waiting_for_promotion())
+	assert_eq(pawn.stats, _load("white", "pawn"), "not promoted yet")
+	assert_eq(arena.turn_manager.current_team, Team.WHITE, "the turn is not over")
+	assert_true(arena.promotion_panel.visible)
+	assert_eq(arena.promotion_panel.options.get_child_count(), 4)
+	assert_false(pawn.drag_and_drop.enabled, "nothing can be dragged meanwhile")
+
+
+func test_choosing_a_piece_promotes_and_ends_the_turn() -> void:
+	var setup := _arena_with_pawn_about_to_promote()
+	var arena: Arena = setup[0]
+	var pawn: Unit = setup[1]
+	arena.unit_mover.perform_board_move(pawn, Vector2i(0, 1), Vector2i(0, 0))
+	
+	# Options: queen, rook, bishop, knight.
+	(arena.promotion_panel.options.get_child(3) as Button).pressed.emit()
+	
+	assert_eq(pawn.stats, _load("white", "knight"))
 	assert_eq(pawn.promoted_from, _load("white", "pawn"))
-	assert_eq(pawn.get_run_stats(), _load("white", "pawn"))
-	assert_eq(pawn.skin.region_rect.position, Vector2(_load("white", "queen").skin_coordinates) * 8)
+	assert_eq(pawn.skin.region_rect.position, Vector2(_load("white", "knight").skin_coordinates) * 8)
+	assert_false(arena.promotion_panel.visible)
+	assert_false(arena.unit_mover.is_waiting_for_promotion())
+	assert_eq(arena.turn_manager.current_team, Team.BLACK)
+
+
+func test_promotion_options_tooltips() -> void:
+	var setup := _arena_with_pawn_about_to_promote()
+	var arena: Arena = setup[0]
+	arena.unit_mover.perform_board_move(setup[1], Vector2i(0, 1), Vector2i(0, 0))
+	
+	(arena.promotion_panel.options.get_child(1) as Button).mouse_entered.emit()
+	
+	assert_eq(Tooltip.title.text, "Rook")
+	Tooltip.hide_tooltip()
+
+
+func test_enemy_pawns_still_promote_to_queen_right_away() -> void:
+	var arena := ArenaHelper.create_arena(self)
+	var black_pawn := ArenaHelper.place_unit(arena, Vector2i(4, 3), _load("black", "pawn"))
+	ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(0, 4))
+	arena.preparation.start_battle()
+	arena.turn_manager.end_turn(arena.board.unit_grid.to_board_state())
+	
+	arena.unit_mover.perform_board_move(black_pawn, Vector2i(4, 3), Vector2i(4, 4))
+	
+	assert_eq(black_pawn.stats, _load("black", "queen"))
+	assert_false(arena.unit_mover.is_waiting_for_promotion())
+
+
+func test_pawns_offer_four_promotions() -> void:
+	for team_name in ["white", "black"]:
+		var options := _load(team_name, "pawn").promotion_options
+		assert_eq(options, [
+			_load(team_name, "queen"), _load(team_name, "rook"),
+			_load(team_name, "bishop"), _load(team_name, "knight"),
+		] as Array[Resource])
 
 
 func test_captured_promoted_piece_goes_to_graveyard_as_pawn() -> void:

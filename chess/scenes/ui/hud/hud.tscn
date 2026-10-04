@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/ui/hud/money_label.gd" id="1_money"]
 [ext_resource type="Script" path="res://scenes/ui/hud/progress_label.gd" id="2_progress"]
 [ext_resource type="Script" path="res://scenes/ui/hud/gambit_bar.gd" id="3_gambits"]
+[ext_resource type="Script" path="res://scenes/ui/hud/boss_label.gd" id="4_boss"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_money"]
 content_margin_left = 2.0
@@ -13,6 +14,16 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.55, 0.27, 0.3, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boss"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+bg_color = Color(0.3, 0.13, 0.35, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.5, 0.95, 1)
 
 [node name="Hud" type="CanvasLayer"]
 
@@ -51,3 +62,24 @@ offset_right = 152.0
 offset_bottom = 64.0
 theme_override_constants/separation = 0
 script = ExtResource("3_gambits")
+
+[node name="BossLabel" type="Label" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -9.0
+offset_right = -18.0
+offset_bottom = -1.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_boss")
+text = "BOSS: Tal"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_boss")

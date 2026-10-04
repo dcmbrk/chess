@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="StasisBoss" format=3]
+
+[ext_resource type="Script" path="res://data/bosses/stasis_boss.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+display_name = "Kev Borclick"
+description = "2 boss pieces are in STASIS for 3 turns: they can't move or be captured."
+count = 2
+duration = 3

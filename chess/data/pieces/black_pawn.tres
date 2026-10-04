@@ -4,9 +4,14 @@
 
 [ext_resource type="Resource" path="res://data/pieces/black_queen.tres" id="2_promo"]
 
+[ext_resource type="Resource" path="res://data/pieces/black_rook.tres" id="4_promo"]
+[ext_resource type="Resource" path="res://data/pieces/black_bishop.tres" id="5_promo"]
+[ext_resource type="Resource" path="res://data/pieces/black_knight.tres" id="6_promo"]
+
 [resource]
 script = ExtResource("1_opkba")
 team = 1
 price = 2
 promotes_to = ExtResource("2_promo")
+promotion_options = Array[Resource]([ExtResource("2_promo"), ExtResource("4_promo"), ExtResource("5_promo"), ExtResource("6_promo")])
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"

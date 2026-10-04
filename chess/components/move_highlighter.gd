@@ -4,6 +4,8 @@ extends Node
 @export var play_area: PlayArea
 @export var hint_layer: TileMapLayer
 @export var tile: Vector2i
+## Optional: shows where a Stock unit can be put during a battle.
+@export var unit_mover: UnitMover
 
 @onready var source_id := play_area.tile_set.get_source_id(0)
 
@@ -26,7 +28,10 @@ func show_moves(unit: Unit) -> void:
 	clear()
 
 	var from := play_area.get_tile_from_global(unit.global_position)
-	if not unit.stats or not play_area.is_tile_in_bounds(from):
+	if not unit.stats:
+		return
+	if not play_area.is_tile_in_bounds(from):
+		_show_deploy_tiles(unit)
 		return
 
 	# The unit may already be removed from the grid by UnitMover.
@@ -53,3 +58,12 @@ func _on_unit_mouse_entered(unit: Unit) -> void:
 func _on_unit_mouse_exited() -> void:
 	if not _is_any_unit_dragging():
 		clear()
+
+
+func _show_deploy_tiles(unit: Unit) -> void:
+	if not unit_mover:
+		return
+	
+	for board_tile: Vector2i in play_area.unit_grid.units:
+		if unit_mover.can_deploy(unit, board_tile):
+			hint_layer.set_cell(board_tile, source_id, tile)

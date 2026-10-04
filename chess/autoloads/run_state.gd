@@ -36,6 +36,13 @@ const STARTING_MAX_BOARD_PIECES := 3
 const MAX_BOARD_PIECES_LIMIT := 10
 const UPGRADE_BASE_PRICE := 10
 const UPGRADE_PRICE_STEP := 5
+const BOSS_POOL: Array[BossData] = [
+	preload("res://data/bosses/magnus_the_swift.tres"),
+	preload("res://data/bosses/hikaru_the_banished.tres"),
+	preload("res://data/bosses/tal_the_cursed.tres"),
+	preload("res://data/bosses/kev_borclick.tres"),
+	preload("res://data/bosses/jawby_fisher.tres"),
+]
 const MAX_GAMBITS := 6
 const GAMBIT_POOL: Array[GambitData] = [
 	preload("res://data/gambits/bug_catchers_gambit.tres"),
@@ -67,6 +74,9 @@ var shop_locks: Array[bool] = []
 ## Gambits for sale; null means the slot is empty or was bought.
 var gambit_offers: Array[GambitData] = []
 var gambits: Array[GambitData] = []
+## The boss waiting at the end of the current stage.
+var boss: BossData
+var _met_bosses: Array[BossData] = []
 
 
 func _ready() -> void:
@@ -93,6 +103,8 @@ func reset() -> void:
 	gambit_offers.resize(SHOP_SIZE)
 	gambits.clear()
 	gambits_changed.emit()
+	_met_bosses.clear()
+	boss = _pick_boss()
 
 
 func is_boss_game() -> bool:
@@ -105,7 +117,21 @@ func advance() -> bool:
 	if game > GAMES_PER_STAGE:
 		game = 1
 		stage += 1
+		boss = _pick_boss()
 	return stage > STAGE_COUNT
+
+
+## A boss not met yet in this run (any boss once all were met).
+func _pick_boss() -> BossData:
+	var candidates := BOSS_POOL.filter(func(candidate: BossData) -> bool:
+		return candidate not in _met_bosses
+	)
+	if candidates.is_empty():
+		candidates = BOSS_POOL.duplicate()
+	
+	var picked: BossData = candidates[rng.randi_range(0, candidates.size() - 1)]
+	_met_bosses.append(picked)
+	return picked
 
 
 func pick_encounter() -> EncounterData:

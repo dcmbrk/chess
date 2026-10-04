@@ -49,6 +49,8 @@ func can_drop(unit: Unit, from_board: bool, to_board: bool, to_tile: Vector2i, s
 		return false
 	if to_board and not is_in_player_zone(to_tile):
 		return false
+	if to_board and board.unit_grid.forbidden_tiles.get(to_tile, -1) == player_team:
+		return false
 
 	var count_after := count_player_pieces(unit)
 	if to_board:

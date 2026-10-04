@@ -9,6 +9,8 @@ const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
 
 ## The enemies of this battle. Picked from RunState when left empty.
 @export var encounter: EncounterData
+## The boss rule of this battle. Taken from RunState on boss games when left empty.
+@export var boss: BossData
 
 @onready var unit_mover: UnitMover = $UnitMover
 @onready var unit_spawner: UnitSpawner = $UnitSpawner
@@ -19,6 +21,9 @@ const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
 @onready var preparation: PreparationPhase = $PreparationPhase
 @onready var prep_panel: PrepPanel = $PrepPanel
 @onready var enemy_zone_overlay: EnemyZoneOverlay = $Board/EnemyZoneOverlay
+@onready var cursed_tiles_overlay: CursedTilesOverlay = $Board/CursedTilesOverlay
+@onready var boss_label: BossLabel = $Hud/BossLabel
+@onready var promotion_panel: PromotionPanel = $PromotionPanel
 @onready var graveyard_panel: GraveyardPanel = $GraveyardPanel
 @onready var unit_seller: UnitSeller = $UnitSeller
 @onready var unit_tooltip: UnitTooltip = $UnitTooltip
@@ -32,6 +37,8 @@ func _ready() -> void:
 	unit_spawner.unit_spawned.connect(unit_seller.setup_unit)
 	unit_spawner.unit_spawned.connect(unit_tooltip.setup_unit)
 	unit_mover.unit_captured.connect(_on_unit_captured)
+	unit_mover.promotion_requested.connect(promotion_panel.open)
+	promotion_panel.chosen.connect(unit_mover.finish_promotion)
 	turn_manager.battle_ended.connect(_on_battle_ended)
 	battle_result.closed.connect(_on_battle_result_closed)
 	preparation.pieces_changed.connect(prep_panel.update_pieces)
@@ -48,6 +55,12 @@ func _ready() -> void:
 		unit_spawner.spawn_unit(piece)
 	
 	preparation.max_pieces = RunState.get_board_slots()
+	if not boss and RunState.is_boss_game():
+		boss = RunState.boss
+	if boss:
+		boss.setup_battle(self)
+		boss_label.show_boss(boss)
+	
 	preparation.start()
 
 
@@ -62,6 +75,9 @@ func _on_unit_captured(unit: Unit, by: Unit) -> void:
 	else:
 		captured_enemies += 1
 		RunState.add_money(RunState.get_capture_bonus(by.stats, unit.stats))
+	
+	if boss:
+		boss.on_unit_captured(self, unit, by)
 
 
 func _on_battle_ended(result: GameRules.Result) -> void:

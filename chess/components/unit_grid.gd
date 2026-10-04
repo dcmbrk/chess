@@ -6,6 +6,10 @@ signal unit_grid_changed
 @export var size: Vector2i
 
 var units: Dictionary
+## CURSED tiles: tile -> the UnitStats.Team that may not enter it.
+var forbidden_tiles: Dictionary[Vector2i, int] = {}
+## STASIS: units on these tiles can't move and can't be captured.
+var frozen_tiles: Dictionary[Vector2i, bool] = {}
 
 
 func _ready() -> void:
@@ -58,6 +62,8 @@ func get_all_units() -> Array[Unit]:
 
 func to_board_state() -> BoardState:
 	var board := BoardState.new(size)
+	board.forbidden_tiles = forbidden_tiles.duplicate()
+	board.frozen_tiles = frozen_tiles.duplicate()
 
 	for tile: Vector2i in units:
 		var unit := units[tile] as Unit

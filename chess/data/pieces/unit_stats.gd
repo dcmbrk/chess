@@ -23,7 +23,11 @@ const DESCRIPTIONS := {
 ## Buying price in the shop.
 @export var price := 1
 ## What this piece turns into when it reaches the last row (pawns).
+## Used by the enemy and by the AI's search.
 @export var promotes_to: UnitStats
+## What the player may choose from when this piece is promoted (UnitStats).
+## Typed as Resource: an Array[UnitStats] inside UnitStats makes the script reference itself and leak.
+@export var promotion_options: Array[Resource] = []
 
 
 static func get_opponent(of_team: Team) -> Team:

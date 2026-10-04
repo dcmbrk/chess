@@ -1,5 +1,6 @@
 ## Chess movement rules for every piece type.
-## Not implemented yet: double pawn step, promotion, castling, en passant, check.
+## CURSED tiles block a team like a wall, STASIS pieces can't move or be captured.
+## Not implemented: double pawn step, castling, en passant, check.
 class_name MoveRules
 extends RefCounted
 
@@ -22,7 +23,7 @@ const KNIGHT_OFFSETS: Array[Vector2i] = [
 static func get_legal_moves(board: BoardState, from: Vector2i) -> Array[Vector2i]:
 	var piece := board.get_piece(from)
 
-	if not piece:
+	if not piece or board.is_frozen(from):
 		return []
 
 	match piece.type:
@@ -72,7 +73,15 @@ static func get_promotion(board: BoardState, piece: UnitStats, to: Vector2i) -> 
 
 
 static func _can_land_on(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
-	return board.is_in_bounds(tile) and (board.is_empty(tile) or board.is_enemy(tile, team))
+	return _can_enter(board, tile, team) and (board.is_empty(tile) or _can_capture(board, tile, team))
+
+
+static func _can_enter(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
+	return board.is_in_bounds(tile) and not board.is_forbidden(tile, team)
+
+
+static func _can_capture(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
+	return board.is_enemy(tile, team) and not board.is_frozen(tile)
 
 
 static func _get_pawn_moves(board: BoardState, from: Vector2i, team: UnitStats.Team) -> Array[Vector2i]:
@@ -80,12 +89,12 @@ static func _get_pawn_moves(board: BoardState, from: Vector2i, team: UnitStats.T
 	var forward := get_forward(team)
 
 	var ahead := from + forward
-	if board.is_in_bounds(ahead) and board.is_empty(ahead):
+	if _can_enter(board, ahead, team) and board.is_empty(ahead):
 		moves.append(ahead)
 
 	for side: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
 		var capture := from + forward + side
-		if board.is_in_bounds(capture) and board.is_enemy(capture, team):
+		if _can_enter(board, capture, team) and _can_capture(board, capture, team):
 			moves.append(capture)
 
 	return moves
