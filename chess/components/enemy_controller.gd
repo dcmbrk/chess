@@ -8,17 +8,14 @@ extends Node
 @export var turn_manager: TurnManager
 @export var unit_mover: UnitMover
 
-var rng := RandomNumberGenerator.new()
-
 
 func _ready() -> void:
-	rng.randomize()
 	turn_manager.turn_started.connect(_on_turn_started)
 
 
 func play_turn() -> void:
 	var board_state := board.unit_grid.to_board_state()
-	var move := ChessAI.choose_move(board_state, team, search_depth, rng)
+	var move := ChessAI.choose_move(board_state, team, search_depth, RunState.rng)
 
 	# TurnManager skips the turn of a team without legal moves.
 	if not move:
@@ -32,7 +29,8 @@ func _on_turn_started(current_team: UnitStats.Team) -> void:
 	if current_team != team:
 		return
 
-	await get_tree().create_timer(think_delay).timeout
+	# Not process_always: the enemy waits while the game is paused.
+	await get_tree().create_timer(think_delay, false).timeout
 
 	if turn_manager.active and turn_manager.current_team == team:
 		play_turn()

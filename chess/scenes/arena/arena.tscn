@@ -21,7 +21,7 @@
 [ext_resource type="Script" uid="uid://cvv5r1btrdipp" path="res://components/cursed_tiles_overlay.gd" id="22_curs"]
 [ext_resource type="PackedScene" path="res://scenes/ui/promotion/promotion_panel.tscn" id="23_prom"]
 
-[node name="Arena" type="Node2D" unique_id=392534286]
+[node name="Arena" type="Node2D" unique_id=392534286 groups=["run_scenes"]]
 script = ExtResource("1_8trdl")
 metadata/_edit_group_ = true
 metadata/_edit_lock_ = true

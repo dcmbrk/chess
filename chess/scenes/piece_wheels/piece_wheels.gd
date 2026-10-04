@@ -53,7 +53,7 @@ func stop() -> void:
 	while not is_done():
 		_stop_next_reel()
 		if not is_done() and stop_delay > 0.0:
-			await get_tree().create_timer(stop_delay).timeout
+			await get_tree().create_timer(stop_delay, false).timeout
 	
 	action_button.text = "Start!"
 	action_button.disabled = false

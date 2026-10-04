@@ -64,7 +64,9 @@ var graveyard: Array[UnitStats] = []
 var stage := 1
 ## The game inside the current stage; the last one is the boss.
 var game := 1
+## Every random choice of the run comes from this generator, seeded with [member run_seed].
 var rng := RandomNumberGenerator.new()
+var run_seed := 0
 ## How many pieces the player may place on the board.
 var max_board_pieces := STARTING_MAX_BOARD_PIECES
 ## Pieces for sale; null means the slot was bought.
@@ -87,13 +89,15 @@ func add_money(amount: int) -> void:
 	money += amount
 
 
-func reset() -> void:
+## Starts a new run. A negative [param new_seed] picks a random one.
+func reset(new_seed := -1) -> void:
+	run_seed = new_seed if new_seed >= 0 else randi()
+	rng.seed = run_seed
 	money = STARTING_MONEY
 	pieces = STARTING_PIECES.duplicate()
 	graveyard.clear()
 	stage = 1
 	game = 1
-	rng.randomize()
 	max_board_pieces = STARTING_MAX_BOARD_PIECES
 	shop_offers.clear()
 	shop_offers.resize(SHOP_SIZE)
