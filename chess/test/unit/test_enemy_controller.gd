@@ -49,13 +49,13 @@ func test_enemy_answers_after_player_move() -> void:
 	assert_eq(turn_manager.current_team, UnitStats.Team.WHITE)
 
 
-func test_enemy_passes_when_it_has_no_moves() -> void:
-	for tile in _black_tiles():
-		var unit: Unit = grid.units[tile]
-		grid.remove_unit(tile)
-		unit.free()
-	turn_manager.end_turn()
+func test_enemy_does_not_move_after_battle_ended() -> void:
+	var pawn: Unit = grid.units[Vector2i(0, 4)]
+	arena.unit_mover.perform_board_move(pawn, Vector2i(0, 4), Vector2i(0, 3))
+	var before := _black_tiles()
 	
+	# The battle ends while the enemy is still "thinking".
+	turn_manager.active = false
 	await wait_process_frames(5)
 	
-	assert_eq(turn_manager.current_team, UnitStats.Team.WHITE)
+	assert_eq(_black_tiles(), before)

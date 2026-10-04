@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://c7f17g8h7fg7m" path="res://components/turn_manager.gd" id="11_trnm"]
 [ext_resource type="Resource" uid="uid://currstgllm6ix" path="res://data/pieces/black_pawn.tres" id="12_bpwn"]
 [ext_resource type="Script" uid="uid://dtqyj7dftdo2c" path="res://components/enemy_controller.gd" id="13_enmy"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle_result/battle_result.tscn" id="14_rslt"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -145,3 +146,5 @@ script = ExtResource("9_6w4xk")
 bench = NodePath("../Bench")
 game_area = NodePath("../Board")
 metadata/_custom_type_script = "uid://c3kvvpgst77kx"
+
+[node name="BattleResult" parent="." instance=ExtResource("14_rslt")]

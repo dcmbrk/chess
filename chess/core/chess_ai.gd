@@ -14,20 +14,6 @@ const PIECE_VALUES := {
 const WIN_SCORE := 10000
 
 
-static func get_all_moves(board: BoardState, team: UnitStats.Team) -> Array[ChessMove]:
-	var moves: Array[ChessMove] = []
-
-	for x in board.size.x:
-		for y in board.size.y:
-			var from := Vector2i(x, y)
-			var piece := board.get_piece(from)
-			if piece and piece.team == team:
-				for to in MoveRules.get_legal_moves(board, from):
-					moves.append(ChessMove.new(from, to))
-
-	return moves
-
-
 ## Material balance from [param team]'s point of view.
 static func evaluate(board: BoardState, team: UnitStats.Team) -> int:
 	var score := 0
@@ -50,7 +36,7 @@ static func choose_move(board: BoardState, team: UnitStats.Team, depth: int, rng
 	var best_moves: Array[ChessMove] = []
 	var best_score := -INF
 
-	for move in get_all_moves(board, team):
+	for move in MoveRules.get_all_moves(board, team):
 		var score := _score_move(board, move, team, depth)
 		if score > best_score:
 			best_score = score
@@ -85,7 +71,7 @@ static func _negamax(board: BoardState, team: UnitStats.Team, depth: int, alpha:
 	if depth == 0:
 		return evaluate(board, team)
 
-	var moves := get_all_moves(board, team)
+	var moves := MoveRules.get_all_moves(board, team)
 	if moves.is_empty():
 		return evaluate(board, team)
 

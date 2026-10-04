@@ -42,6 +42,20 @@ static func get_legal_moves(board: BoardState, from: Vector2i) -> Array[Vector2i
 	return []
 
 
+static func get_all_moves(board: BoardState, team: UnitStats.Team) -> Array[ChessMove]:
+	var moves: Array[ChessMove] = []
+
+	for x in board.size.x:
+		for y in board.size.y:
+			var from := Vector2i(x, y)
+			var piece := board.get_piece(from)
+			if piece and piece.team == team:
+				for to in get_legal_moves(board, from):
+					moves.append(ChessMove.new(from, to))
+
+	return moves
+
+
 static func get_forward(team: UnitStats.Team) -> Vector2i:
 	return Vector2i.UP if team == UnitStats.Team.WHITE else Vector2i.DOWN
 

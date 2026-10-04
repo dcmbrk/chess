@@ -26,6 +26,21 @@ func test_forward_direction() -> void:
 	assert_eq(MoveRules.get_forward(Team.BLACK), Vector2i.DOWN)
 
 
+func test_get_all_moves_only_for_given_team() -> void:
+	var board := PieceFactory.board_with({
+		Vector2i(2, 4): PieceFactory.make(Type.PAWN, Team.WHITE),
+		Vector2i(0, 4): PieceFactory.make(Type.KNIGHT, Team.WHITE),
+		Vector2i(4, 0): PieceFactory.make(Type.KING, Team.BLACK),
+	})
+
+	var moves := MoveRules.get_all_moves(board, Team.WHITE)
+
+	# Pawn: 1 move, knight in corner: 2 moves.
+	assert_eq(moves.size(), 3)
+	for move in moves:
+		assert_eq(board.get_piece(move.from).team, Team.WHITE)
+
+
 # --- Pawn ---
 
 func test_white_pawn_moves_up_one_tile() -> void:

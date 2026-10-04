@@ -43,7 +43,7 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		captured.queue_free()
 	
 	_move_unit(unit, board, to)
-	turn_manager.end_turn()
+	turn_manager.end_turn(board.unit_grid.to_board_state())
 	return true
 
 

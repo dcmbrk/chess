@@ -20,9 +20,8 @@ func play_turn() -> void:
 	var board_state := board.unit_grid.to_board_state()
 	var move := ChessAI.choose_move(board_state, team, search_depth, rng)
 
+	# TurnManager skips the turn of a team without legal moves.
 	if not move:
-		# TODO: stalemate handling belongs to the win/lose conditions.
-		turn_manager.end_turn()
 		return
 
 	var unit: Unit = board.unit_grid.units[move.from]

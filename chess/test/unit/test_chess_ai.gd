@@ -10,21 +10,6 @@ func _assert_move(move: ChessMove, from: Vector2i, to: Vector2i) -> void:
 		assert_eq([move.from, move.to], [from, to])
 
 
-func test_get_all_moves_only_for_given_team() -> void:
-	var board := PieceFactory.board_with({
-		Vector2i(2, 4): PieceFactory.make(Type.PAWN, Team.WHITE),
-		Vector2i(0, 4): PieceFactory.make(Type.KNIGHT, Team.WHITE),
-		Vector2i(4, 0): PieceFactory.make(Type.KING, Team.BLACK),
-	})
-
-	var moves := ChessAI.get_all_moves(board, Team.WHITE)
-
-	# Pawn: 1 move, knight in corner: 2 moves.
-	assert_eq(moves.size(), 3)
-	for move in moves:
-		assert_eq(board.get_piece(move.from).team, Team.WHITE)
-
-
 func test_evaluate_counts_material_from_team_point_of_view() -> void:
 	var board := PieceFactory.board_with({
 		Vector2i(0, 0): PieceFactory.make(Type.ROOK, Team.WHITE),
