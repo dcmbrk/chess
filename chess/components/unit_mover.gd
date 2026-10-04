@@ -6,6 +6,7 @@ signal unit_captured(unit: Unit)
 @export var play_areas: Array[PlayArea]
 @export var board: PlayArea
 @export var turn_manager: TurnManager
+@export var player_team := UnitStats.Team.WHITE
 
 
 func _ready() -> void:
@@ -120,7 +121,8 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 	
 	if _is_battle_active() and (old_area == board or new_area == board):
 		var is_board_move := old_area == board and new_area == board
-		if not is_board_move or not perform_board_move(unit, old_tile, new_tile):
+		var is_player_unit := unit.stats.team == player_team
+		if not is_board_move or not is_player_unit or not perform_board_move(unit, old_tile, new_tile):
 			_reset_unit_to_starting_position(starting_position, unit)
 		return
 	

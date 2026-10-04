@@ -45,11 +45,6 @@ func test_end_turn_alternates_teams() -> void:
 	assert_signal_emit_count(turn_manager, "turn_started", 2)
 
 
-func test_get_opponent() -> void:
-	assert_eq(TurnManager.get_opponent(Team.WHITE), Team.BLACK)
-	assert_eq(TurnManager.get_opponent(Team.BLACK), Team.WHITE)
-
-
 func test_only_current_team_can_move() -> void:
 	turn_manager.start_battle()
 	

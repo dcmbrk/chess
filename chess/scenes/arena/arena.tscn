@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://wopted37y6qy" path="res://components/move_highlighter.gd" id="10_mvhl"]
 [ext_resource type="Script" uid="uid://c7f17g8h7fg7m" path="res://components/turn_manager.gd" id="11_trnm"]
 [ext_resource type="Resource" uid="uid://currstgllm6ix" path="res://data/pieces/black_pawn.tres" id="12_bpwn"]
+[ext_resource type="Script" uid="uid://dtqyj7dftdo2c" path="res://components/enemy_controller.gd" id="13_enmy"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -131,6 +132,13 @@ play_area = NodePath("../Board")
 hint_layer = NodePath("../Board/MoveHints")
 tile = Vector2i(11, 0)
 metadata/_custom_type_script = "uid://wopted37y6qy"
+
+[node name="EnemyController" type="Node" parent="." node_paths=PackedStringArray("board", "turn_manager", "unit_mover")]
+script = ExtResource("13_enmy")
+board = NodePath("../Board")
+turn_manager = NodePath("../TurnManager")
+unit_mover = NodePath("../UnitMover")
+metadata/_custom_type_script = "uid://dtqyj7dftdo2c"
 
 [node name="UnitSpawner" type="Node" parent="." unique_id=750164866 node_paths=PackedStringArray("bench", "game_area")]
 script = ExtResource("9_6w4xk")

@@ -1,0 +1,39 @@
+class_name EnemyController
+extends Node
+
+@export var team := UnitStats.Team.BLACK
+@export_range(1, 4) var search_depth := 2
+@export var think_delay := 0.5
+@export var board: PlayArea
+@export var turn_manager: TurnManager
+@export var unit_mover: UnitMover
+
+var rng := RandomNumberGenerator.new()
+
+
+func _ready() -> void:
+	rng.randomize()
+	turn_manager.turn_started.connect(_on_turn_started)
+
+
+func play_turn() -> void:
+	var board_state := board.unit_grid.to_board_state()
+	var move := ChessAI.choose_move(board_state, team, search_depth, rng)
+
+	if not move:
+		# TODO: stalemate handling belongs to the win/lose conditions.
+		turn_manager.end_turn()
+		return
+
+	var unit: Unit = board.unit_grid.units[move.from]
+	unit_mover.perform_board_move(unit, move.from, move.to)
+
+
+func _on_turn_started(current_team: UnitStats.Team) -> void:
+	if current_team != team:
+		return
+
+	await get_tree().create_timer(think_delay).timeout
+
+	if turn_manager.active and turn_manager.current_team == team:
+		play_turn()

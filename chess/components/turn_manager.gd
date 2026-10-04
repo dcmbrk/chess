@@ -9,10 +9,6 @@ var current_team: UnitStats.Team
 var active := false
 
 
-static func get_opponent(team: UnitStats.Team) -> UnitStats.Team:
-	return UnitStats.Team.BLACK if team == UnitStats.Team.WHITE else UnitStats.Team.WHITE
-
-
 func start_battle() -> void:
 	active = true
 	current_team = starting_team
@@ -21,7 +17,7 @@ func start_battle() -> void:
 
 func end_turn() -> void:
 	assert(active, "Can't end a turn outside of a battle!")
-	current_team = get_opponent(current_team)
+	current_team = UnitStats.get_opponent(current_team)
 	turn_started.emit(current_team)
 
 

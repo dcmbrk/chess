@@ -41,3 +41,8 @@ func test_piece_resources_have_correct_type_and_team() -> void:
 	assert_eq(WHITE_KNIGHT.team, UnitStats.Team.WHITE)
 	assert_eq(BLACK_PAWN.type, UnitStats.Type.PAWN)
 	assert_eq(BLACK_PAWN.team, UnitStats.Team.BLACK)
+
+
+func test_get_opponent() -> void:
+	assert_eq(UnitStats.get_opponent(UnitStats.Team.WHITE), UnitStats.Team.BLACK)
+	assert_eq(UnitStats.get_opponent(UnitStats.Team.BLACK), UnitStats.Team.WHITE)
