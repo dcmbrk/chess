@@ -1,9 +1,7 @@
 [gd_resource type="Resource" script_class="UnitStats" format=3 uid="uid://currstgllm6ix"]
 
 [ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/unit_stats.gd" id="1_opkba"]
-
 [ext_resource type="Resource" path="res://data/pieces/black_queen.tres" id="2_promo"]
-
 [ext_resource type="Resource" path="res://data/pieces/black_rook.tres" id="4_promo"]
 [ext_resource type="Resource" path="res://data/pieces/black_bishop.tres" id="5_promo"]
 [ext_resource type="Resource" path="res://data/pieces/black_knight.tres" id="6_promo"]

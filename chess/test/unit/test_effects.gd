@@ -188,3 +188,29 @@ func test_beating_the_last_boss_shows_the_victory() -> void:
 	
 	assert_true(arena.victory_panel.visible)
 	assert_eq(Progress.runs_won, wins + 1)
+
+
+# --- Art ---
+
+func test_units_draw_the_piece_sheet_at_board_cell_size() -> void:
+	var arena := ArenaHelper.create_arena(self)
+	var black_pawn: Unit = arena.board.unit_grid.units[Vector2i(1, 1)]
+	
+	assert_eq(black_pawn.skin.texture, UnitStats.TEXTURE)
+	assert_eq(black_pawn.skin.region_rect, black_pawn.stats.get_sprite_region())
+	assert_eq(black_pawn.skin.region_rect.size * black_pawn.skin.scale, Arena.CELL_SIZE)
+
+
+func test_piece_buttons_shrink_the_icon_to_a_cell() -> void:
+	var button := UiStyle.create_piece_button(WHITE_KNIGHT, "$5")
+	add_child_autofree(button)
+	
+	assert_eq(button.get_theme_constant("icon_max_width"), 8)
+
+
+func test_custom_cursor_is_loaded() -> void:
+	assert_eq(ScreenEffects.CURSOR.get_size(), Vector2(30, 32))
+
+
+func test_cursed_tiles_use_the_tile_art() -> void:
+	assert_eq(CursedTilesOverlay.TEXTURE.get_size(), Vector2(64, 64))

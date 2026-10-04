@@ -8,14 +8,17 @@ signal unit_sold(unit: Unit, price: int)
 const SELL_TINT := Color(1, 0.4, 0.4)
 
 @export var preparation: PreparationPhase
-@export var play_areas: Array[PlayArea]
+@export var board: PlayArea
+@export var bench: PlayArea
 @export var hold_time := 0.6
 
+var play_areas: Array[PlayArea] = []
 var _held: Unit
 var _held_time := 0.0
 
 
 func _ready() -> void:
+	play_areas.assign([board, bench].filter(func(area: PlayArea) -> bool: return area != null))
 	var units := get_tree().get_nodes_in_group("units")
 	for unit: Unit in units:
 		setup_unit(unit)

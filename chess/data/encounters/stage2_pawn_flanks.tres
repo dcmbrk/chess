@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="EncounterData" format=3]
+[gd_resource type="Resource" script_class="EncounterData" format=3 uid="uid://bvsl2vnnkx7rg"]
 
-[ext_resource type="Script" path="res://data/pieces/unit_stats.gd" id="1_ud2tb"]
-[ext_resource type="Resource" path="res://data/pieces/black_pawn.tres" id="2_1mq8d"]
-[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="3_58di3"]
+[ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/unit_stats.gd" id="1_ud2tb"]
+[ext_resource type="Resource" uid="uid://currstgllm6ix" path="res://data/pieces/black_pawn.tres" id="2_1mq8d"]
+[ext_resource type="Script" uid="uid://cfexw8u3wni36" path="res://data/encounters/encounter_data.gd" id="3_58di3"]
 
 [resource]
 script = ExtResource("3_58di3")

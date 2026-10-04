@@ -7,7 +7,8 @@ extends Node
 ## Optional: shows where a Stock unit can be put during a battle.
 @export var unit_mover: UnitMover
 
-@onready var source_id := play_area.tile_set.get_source_id(0)
+## The hint layer has its own tile set (the selection frame art).
+@onready var source_id := hint_layer.tile_set.get_source_id(0)
 
 
 func _ready() -> void:

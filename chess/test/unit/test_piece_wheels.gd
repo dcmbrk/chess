@@ -106,4 +106,4 @@ func test_icon_uses_the_piece_sprite() -> void:
 	var icon := WHITE_KNIGHT.create_icon()
 	
 	assert_eq(icon.atlas, UnitStats.TEXTURE)
-	assert_eq(icon.region, Rect2(Vector2(WHITE_KNIGHT.skin_coordinates) * 8, Vector2(8, 8)))
+	assert_eq(icon.region, WHITE_KNIGHT.get_sprite_region())

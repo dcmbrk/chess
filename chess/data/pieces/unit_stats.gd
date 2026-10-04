@@ -1,12 +1,16 @@
 class_name UnitStats
 extends Resource
 
-const TEXTURE := preload("res://assets/sprites/piece.png")
-## Size of one piece in TEXTURE.
-const SPRITE_SIZE := Vector2(8, 8)
-
 enum Type { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
 enum Team { WHITE, BLACK }
+
+const TEXTURE := preload("res://assets/sprites/pieces/SPR_ChessPieces.png")
+## TEXTURE has one row per team (white, black) and one column per type, in this order.
+const SHEET_COLUMNS: Array[Type] = [Type.PAWN, Type.ROOK, Type.KNIGHT, Type.BISHOP, Type.QUEEN, Type.KING]
+const SHEET_CELL := Vector2(40, 32)
+## Each piece is centered in its cell; this square crop around it is what gets drawn.
+const SPRITE_SIZE := Vector2(32, 32)
+const SPRITE_INSET := Vector2(5, 0)
 
 const DESCRIPTIONS := {
 	Type.PAWN: "Moves 1 forward, captures diagonally. Becomes a Queen on the last row.",
@@ -19,7 +23,6 @@ const DESCRIPTIONS := {
 
 @export var type: Type
 @export var team: Team
-@export var skin_coordinates: Vector2i
 ## Buying price in the shop.
 @export var price := 1
 ## What this piece turns into when it reaches the last row (pawns).
@@ -35,10 +38,16 @@ static func get_opponent(of_team: Team) -> Team:
 
 
 ## The piece's sprite as a texture, for UI.
+## Where this piece is drawn in TEXTURE.
+func get_sprite_region() -> Rect2:
+	var cell := Vector2(SHEET_COLUMNS.find(type), team) * SHEET_CELL
+	return Rect2(cell + SPRITE_INSET, SPRITE_SIZE)
+
+
 func create_icon() -> AtlasTexture:
 	var icon := AtlasTexture.new()
 	icon.atlas = TEXTURE
-	icon.region = Rect2(Vector2(skin_coordinates) * SPRITE_SIZE, SPRITE_SIZE)
+	icon.region = get_sprite_region()
 	return icon
 
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://u1qjdot2v7ep"]
 
-[ext_resource type="Texture2D" uid="uid://cgetgswp32rmu" path="res://assets/sprites/piece.png" id="1_0gcah"]
+[ext_resource type="Texture2D" uid="uid://8jq6qjqhox1" path="res://assets/sprites/pieces/SPR_ChessPieces.png" id="1_0gcah"]
 [ext_resource type="Material" uid="uid://bb8m5fhpi4wqn" path="res://assets/shaders/2d_outline_shader.tres" id="1_3w4go"]
 [ext_resource type="Script" uid="uid://ct31546jpg57d" path="res://scenes/unit/unit.gd" id="1_44d7s"]
 [ext_resource type="Resource" uid="uid://ucokdn5hlxig" path="res://data/pieces/white_pawn.tres" id="2_o3pew"]
@@ -25,8 +25,9 @@ material = ExtResource("1_3w4go")
 [node name="Skin" type="Sprite2D" parent="Visuals" unique_id=422919070]
 unique_name_in_owner = true
 texture = ExtResource("1_0gcah")
+scale = Vector2(0.25, 0.25)
 region_enabled = true
-region_rect = Rect2(0, 16, 8, 8)
+region_rect = Rect2(5, 0, 32, 32)
 
 [node name="VelocityBasedRotation" type="Node" parent="." unique_id=91727580 node_paths=PackedStringArray("target")]
 script = ExtResource("5_htf8o")

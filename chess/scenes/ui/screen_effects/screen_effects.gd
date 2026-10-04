@@ -1,5 +1,9 @@
-## Full screen effects (autoload "ScreenEffects"): CRT overlay and screen shake.
+## Full screen effects (autoload "ScreenEffects"): CRT overlay, screen shake and mouse cursor.
 extends CanvasLayer
+
+const CURSOR := preload("res://assets/sprites/cursor/SPR_Cursor_0.png")
+## The arrow's tip inside CURSOR.
+const CURSOR_HOTSPOT := Vector2(2, 2)
 
 ## Shake offsets in game pixels.
 const SHAKE_STEPS := [Vector2(1, 0), Vector2(-1, 1), Vector2(0, -1), Vector2(1, 1)]
@@ -12,6 +16,7 @@ var _shake_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	Input.set_custom_mouse_cursor(CURSOR, Input.CURSOR_ARROW, CURSOR_HOTSPOT)
 	Settings.changed.connect(_apply_settings)
 	_apply_settings()
 

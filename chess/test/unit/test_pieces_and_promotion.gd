@@ -22,21 +22,29 @@ func test_every_piece_exists_for_both_teams() -> void:
 
 
 func test_every_piece_has_its_own_sprite() -> void:
+	var sheet := UnitStats.TEXTURE.get_image()
 	var seen := {}
 	for team_name in ["white", "black"]:
 		for type_name in TYPE_NAMES:
-			var coords := _load(team_name, type_name).skin_coordinates
-			assert_false(seen.has(coords), "%s %s reuses sprite %s" % [team_name, type_name, coords])
-			seen[coords] = true
-			assert_true(Rect2i(0, 0, 3, 4).has_point(coords), "sprite inside piece.png")
+			var piece := _load(team_name, type_name)
+			var region := piece.get_sprite_region()
+			assert_false(seen.has(region), "%s %s reuses a sprite" % [team_name, type_name])
+			seen[region] = true
+			assert_true(Rect2(Vector2.ZERO, sheet.get_size()).encloses(region), "inside the sheet")
+			
+			# The crop must hold the whole drawing of its cell, nothing cut off.
+			var cell := Rect2i(Vector2i(region.position - UnitStats.SPRITE_INSET), Vector2i(UnitStats.SHEET_CELL))
+			var drawing := sheet.get_region(cell).get_used_rect()
+			drawing.position += cell.position
+			assert_false(drawing.size == Vector2i.ZERO, "%s %s has a drawing" % [team_name, type_name])
+			assert_true(Rect2i(region).encloses(drawing), "%s %s is not cut off" % [team_name, type_name])
 
 
-func test_sprite_layout_matches_piece_png() -> void:
-	# Top row: pawn, king, knight. Bottom row: bishop, rook, queen.
-	assert_eq(_load("white", "king").skin_coordinates, Vector2i(1, 2))
-	assert_eq(_load("white", "queen").skin_coordinates, Vector2i(2, 3))
-	assert_eq(_load("black", "rook").skin_coordinates, Vector2i(1, 1))
-	assert_eq(_load("black", "bishop").skin_coordinates, Vector2i(0, 1))
+func test_sprite_layout_matches_the_sheet() -> void:
+	# Rows: white, black. Columns: pawn, rook, knight, bishop, queen, king.
+	assert_eq(_load("white", "pawn").get_sprite_region(), Rect2(5, 0, 32, 32))
+	assert_eq(_load("white", "knight").get_sprite_region(), Rect2(85, 0, 32, 32))
+	assert_eq(_load("black", "king").get_sprite_region(), Rect2(205, 32, 32, 32))
 
 
 func test_only_pawns_promote_and_to_their_own_queen() -> void:
@@ -154,7 +162,7 @@ func test_choosing_a_piece_promotes_and_ends_the_turn() -> void:
 	
 	assert_eq(pawn.stats, _load("white", "knight"))
 	assert_eq(pawn.promoted_from, _load("white", "pawn"))
-	assert_eq(pawn.skin.region_rect.position, Vector2(_load("white", "knight").skin_coordinates) * 8)
+	assert_eq(pawn.skin.region_rect, _load("white", "knight").get_sprite_region())
 	assert_false(arena.promotion_panel.visible)
 	assert_false(arena.unit_mover.is_waiting_for_promotion())
 	assert_eq(arena.turn_manager.current_team, Team.BLACK)

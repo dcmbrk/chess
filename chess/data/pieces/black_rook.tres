@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="UnitStats" format=3]
+[gd_resource type="Resource" script_class="UnitStats" format=3 uid="uid://dnwis651ne6hg"]
 
 [ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/unit_stats.gd" id="1_stats"]
 
@@ -6,6 +6,5 @@
 script = ExtResource("1_stats")
 type = 3
 team = 1
-skin_coordinates = Vector2i(1, 1)
 price = 7
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"

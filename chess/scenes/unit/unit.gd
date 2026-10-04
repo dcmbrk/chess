@@ -30,7 +30,7 @@ func set_stats(value: UnitStats) -> void:
 	if not is_node_ready():
 		await ready
 	
-	skin.region_rect.position = Vector2(stats.skin_coordinates) * Arena.CELL_SIZE
+	skin.region_rect = stats.get_sprite_region()
 
 
 func promote(new_stats: UnitStats) -> void:

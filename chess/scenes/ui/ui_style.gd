@@ -25,6 +25,8 @@ static func create_piece_button(piece: UnitStats, text: String, color := SLOT_CO
 		Tooltip.attach(button, piece.get_display_name(), "", piece.get_description())
 	button.add_theme_font_size_override("font_size", 5)
 	button.add_theme_constant_override("h_separation", 0)
+	# Piece sprites are 32 px; draw them at the size of one board cell.
+	button.add_theme_constant_override("icon_max_width", 8)
 	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		button.add_theme_color_override(state, SLOT_TEXT_COLOR)
 	button.add_theme_stylebox_override("normal", create_flat_style(color))

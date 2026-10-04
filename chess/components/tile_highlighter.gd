@@ -6,7 +6,8 @@ extends Node
 @export var highlight_layer: TileMapLayer
 @export var tile: Vector2i
 
-@onready var source_id := play_area.tile_set.get_source_id(0)
+## The highlight layer has its own tile set (the selection frame art).
+@onready var source_id := highlight_layer.tile_set.get_source_id(0)
 
 
 func _process(_delta: float) -> void:

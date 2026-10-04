@@ -5,8 +5,9 @@ signal unit_captured(unit: Unit, by: Unit)
 ## The player's pawn reached the last row; call [method finish_promotion] with one of [param options].
 signal promotion_requested(unit: Unit, options: Array[Resource])
 
-@export var play_areas: Array[PlayArea]
 @export var board: PlayArea
+## The Stock. Single node references: the editor kept dropping an exported node array.
+@export var bench: PlayArea
 @export var turn_manager: TurnManager
 @export var player_team := UnitStats.Team.WHITE
 @export var preparation: PreparationPhase
@@ -15,10 +16,12 @@ signal promotion_requested(unit: Unit, options: Array[Resource])
 ## Asks the player which piece their pawn becomes. When off, it becomes [member UnitStats.promotes_to].
 @export var ask_player_promotion := false
 
+var play_areas: Array[PlayArea] = []
 var _pending_promotion: Unit
 
 
 func _ready() -> void:
+	play_areas.assign([board, bench].filter(func(area: PlayArea) -> bool: return area != null))
 	var units := get_tree().get_nodes_in_group("units")
 	for unit: Unit in units:
 		_register_unit(unit)
