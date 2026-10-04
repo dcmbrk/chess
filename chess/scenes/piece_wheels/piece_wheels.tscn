@@ -1,0 +1,140 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/piece_wheels/piece_wheels.gd" id="1_wheels"]
+[ext_resource type="Resource" path="res://data/pieces/white_pawn.tres" id="2_pawn"]
+[ext_resource type="Resource" path="res://data/pieces/white_knight.tres" id="3_knight"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 3.0
+bg_color = Color(0.55, 0.27, 0.3, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.93, 0.89, 0.78, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reel"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.93, 0.89, 0.78, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.13, 0.12, 0.16, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+content_margin_left = 3.0
+content_margin_top = 1.0
+content_margin_right = 3.0
+content_margin_bottom = 1.0
+bg_color = Color(0.93, 0.89, 0.78, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 3.0
+content_margin_top = 1.0
+content_margin_right = 3.0
+content_margin_bottom = 1.0
+bg_color = Color(1, 0.97, 0.88, 1)
+
+[node name="PieceWheels" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wheels")
+pool = Array[Resource]([ExtResource("2_pawn"), ExtResource("3_knight")])
+weights = Array[int]([3, 1])
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13, 0.12, 0.16, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 6
+text = "Piece Wheels"
+horizontal_alignment = 1
+
+[node name="Reels" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 3
+
+[node name="ReelFrame1" type="PanelContainer" parent="CenterContainer/Panel/VBoxContainer/Reels"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel1" type="TextureRect" parent="CenterContainer/Panel/VBoxContainer/Reels/ReelFrame1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ReelFrame2" type="PanelContainer" parent="CenterContainer/Panel/VBoxContainer/Reels"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel2" type="TextureRect" parent="CenterContainer/Panel/VBoxContainer/Reels/ReelFrame2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ReelFrame3" type="PanelContainer" parent="CenterContainer/Panel/VBoxContainer/Reels"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_reel")
+
+[node name="Reel3" type="TextureRect" parent="CenterContainer/Panel/VBoxContainer/Reels/ReelFrame3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ActionButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_colors/font_pressed_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_colors/font_focus_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_font_sizes/font_size = 5
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_button")
+text = "STOP!!"

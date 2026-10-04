@@ -3,7 +3,6 @@ extends CanvasLayer
 
 signal closed
 
-const PIECE_TEXTURE := preload("res://assets/sprites/piece.png")
 const SLOT_COLOR := Color(0.93, 0.89, 0.78, 1)
 const SLOT_HOVER_COLOR := Color(1, 0.97, 0.88, 1)
 const SLOT_DISABLED_COLOR := Color(0.45, 0.43, 0.4, 1)
@@ -33,12 +32,8 @@ func _refresh() -> void:
 
 
 func _create_slot(index: int, piece: UnitStats) -> Button:
-	var icon := AtlasTexture.new()
-	icon.atlas = PIECE_TEXTURE
-	icon.region = Rect2(Vector2(piece.skin_coordinates) * Arena.CELL_SIZE, Arena.CELL_SIZE)
-	
 	var slot := Button.new()
-	slot.icon = icon
+	slot.icon = piece.create_icon()
 	slot.text = "$%d" % RunState.REVIVE_PRICE
 	slot.add_theme_font_size_override("font_size", 5)
 	slot.add_theme_constant_override("h_separation", 0)

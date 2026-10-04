@@ -4,6 +4,7 @@ extends Node2D
 const CELL_SIZE := Vector2(8, 8)
 const HALF_CELL_SIZE := Vector2(4, 4)
 const QUARTER_CELL_SIZE := Vector2(2, 2)
+const PIECE_WHEELS_SCENE := "res://scenes/piece_wheels/piece_wheels.tscn"
 
 ## The enemies of this battle. Picked from RunState when left empty.
 @export var encounter: EncounterData
@@ -63,8 +64,12 @@ func _on_battle_ended(result: GameRules.Result) -> void:
 
 
 func _on_battle_result_closed() -> void:
-	# On a loss the result popup already reset the run.
-	if outcome != GameRules.Outcome.LOSS and RunState.advance():
+	# On a loss the result popup already reset the run: start a new one.
+	if outcome == GameRules.Outcome.LOSS:
+		get_tree().change_scene_to_file(PIECE_WHEELS_SCENE)
+		return
+	
+	if RunState.advance():
 		# TODO: show a victory screen.
 		RunState.reset()
 		get_tree().change_scene_to_file("res://scenes/main-menu/main_menu.tscn")
