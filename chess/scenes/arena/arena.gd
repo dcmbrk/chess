@@ -5,6 +5,9 @@ const CELL_SIZE := Vector2(8, 8)
 const HALF_CELL_SIZE := Vector2(4, 4)
 const QUARTER_CELL_SIZE := Vector2(2, 2)
 
+## The enemies of this battle. Picked from RunState when left empty.
+@export var encounter: EncounterData
+
 @onready var unit_mover: UnitMover = $UnitMover
 @onready var unit_spawner: UnitSpawner = $UnitSpawner
 @onready var move_highlighter: MoveHighlighter = $MoveHighlighter
@@ -17,6 +20,7 @@ const QUARTER_CELL_SIZE := Vector2(2, 2)
 @onready var graveyard_panel: GraveyardPanel = $GraveyardPanel
 
 var captured_enemies := 0
+var outcome: GameRules.Outcome
 
 func _ready() -> void:
 	unit_spawner.unit_spawned.connect(unit_mover.setup_unit)
@@ -28,6 +32,11 @@ func _ready() -> void:
 	preparation.battle_started.connect(_on_battle_started)
 	prep_panel.go_pressed.connect(preparation.start_battle)
 	graveyard_panel.closed.connect(get_tree().reload_current_scene)
+	
+	if not encounter:
+		encounter = RunState.pick_encounter()
+	for tile in encounter.pieces:
+		unit_spawner.spawn_unit_at(encounter.pieces[tile], board, tile)
 	
 	for piece in RunState.pieces:
 		unit_spawner.spawn_unit(piece)
@@ -48,12 +57,19 @@ func _on_unit_captured(unit: Unit) -> void:
 
 
 func _on_battle_ended(result: GameRules.Result) -> void:
-	var outcome := GameRules.get_outcome(result, preparation.player_team)
+	outcome = GameRules.get_outcome(result, preparation.player_team)
 	var rewards := BattleRewards.calculate(outcome, captured_enemies, RunState.money)
 	battle_result.show_result(outcome, rewards, captured_enemies)
 
 
 func _on_battle_result_closed() -> void:
+	# On a loss the result popup already reset the run.
+	if outcome != GameRules.Outcome.LOSS and RunState.advance():
+		# TODO: show a victory screen.
+		RunState.reset()
+		get_tree().change_scene_to_file("res://scenes/main-menu/main_menu.tscn")
+		return
+	
 	if not RunState.graveyard.is_empty():
 		graveyard_panel.open()
 		return

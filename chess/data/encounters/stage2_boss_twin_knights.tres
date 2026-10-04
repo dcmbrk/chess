@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EncounterData" format=3]
+
+[ext_resource type="Script" path="res://data/pieces/unit_stats.gd" id="1_prcmc"]
+[ext_resource type="Resource" path="res://data/pieces/black_knight.tres" id="2_gsypl"]
+[ext_resource type="Resource" path="res://data/pieces/black_pawn.tres" id="3_p5hjl"]
+[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="4_ltyqa"]
+
+[resource]
+script = ExtResource("4_ltyqa")
+stage = 2
+is_boss = true
+pieces = Dictionary[Vector2i, ExtResource("1_prcmc")]({
+Vector2i(1, 0): ExtResource("2_gsypl"),
+Vector2i(2, 1): ExtResource("3_p5hjl"),
+Vector2i(3, 0): ExtResource("2_gsypl")
+})

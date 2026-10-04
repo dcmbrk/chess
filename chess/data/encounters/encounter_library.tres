@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EncounterLibrary" format=3]
+
+[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="1_qklkg"]
+[ext_resource type="Resource" path="res://data/encounters/stage1_pawn_line.tres" id="2_nqo77"]
+[ext_resource type="Resource" path="res://data/encounters/stage1_pawn_wedge.tres" id="3_vx8xm"]
+[ext_resource type="Resource" path="res://data/encounters/stage1_boss_pawn_wall.tres" id="4_wel6p"]
+[ext_resource type="Resource" path="res://data/encounters/stage2_knight_escort.tres" id="5_v6vm2"]
+[ext_resource type="Resource" path="res://data/encounters/stage2_pawn_flanks.tres" id="6_6pitj"]
+[ext_resource type="Resource" path="res://data/encounters/stage2_boss_twin_knights.tres" id="7_tfyw7"]
+[ext_resource type="Resource" path="res://data/encounters/stage3_knight_corners.tres" id="8_j8r3f"]
+[ext_resource type="Resource" path="res://data/encounters/stage3_knight_center.tres" id="9_1k2xs"]
+[ext_resource type="Resource" path="res://data/encounters/stage3_boss_cavalry.tres" id="10_1kvkn"]
+[ext_resource type="Resource" path="res://data/encounters/stage4_full_line.tres" id="11_jdopw"]
+[ext_resource type="Resource" path="res://data/encounters/stage4_forward_pawns.tres" id="12_54wkn"]
+[ext_resource type="Resource" path="res://data/encounters/stage4_boss_four_knights.tres" id="13_g18pi"]
+[ext_resource type="Resource" path="res://data/encounters/stage5_fortress.tres" id="14_h1mls"]
+[ext_resource type="Resource" path="res://data/encounters/stage5_vanguard.tres" id="15_ypxmb"]
+[ext_resource type="Resource" path="res://data/encounters/stage5_boss_army.tres" id="16_ghciq"]
+[ext_resource type="Script" path="res://data/encounters/encounter_library.gd" id="17_vaexk"]
+
+[resource]
+script = ExtResource("17_vaexk")
+encounters = Array[ExtResource("1_qklkg")]([ExtResource("2_nqo77"), ExtResource("3_vx8xm"), ExtResource("4_wel6p"), ExtResource("5_v6vm2"), ExtResource("6_6pitj"), ExtResource("7_tfyw7"), ExtResource("8_j8r3f"), ExtResource("9_1k2xs"), ExtResource("10_1kvkn"), ExtResource("11_jdopw"), ExtResource("12_54wkn"), ExtResource("13_g18pi"), ExtResource("14_h1mls"), ExtResource("15_ypxmb"), ExtResource("16_ghciq")])

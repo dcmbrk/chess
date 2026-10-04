@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/hud/money_label.gd" id="1_money"]
+[ext_resource type="Script" path="res://scenes/ui/hud/progress_label.gd" id="2_progress"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_money"]
 content_margin_left = 2.0
@@ -30,3 +31,14 @@ text = "$0"
 horizontal_alignment = 2
 vertical_alignment = 1
 script = ExtResource("1_money")
+
+[node name="ProgressLabel" type="Label" parent="."]
+offset_left = 2.0
+offset_top = 0.0
+offset_right = 80.0
+offset_bottom = 8.0
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 5
+text = "Stage 1/5  Game 1/5"
+vertical_alignment = 1
+script = ExtResource("2_progress")

@@ -3,6 +3,10 @@ extends Node
 
 signal money_changed(money: int)
 
+const STAGE_COUNT := 5
+const GAMES_PER_STAGE := 5
+const ENCOUNTERS: EncounterLibrary = preload("res://data/encounters/encounter_library.tres")
+
 const STARTING_MONEY := 0
 const STARTING_PIECES: Array[UnitStats] = [
 	preload("res://data/pieces/white_pawn.tres"),
@@ -22,6 +26,10 @@ var money := STARTING_MONEY:
 var pieces: Array[UnitStats] = []
 ## The player's last captured pieces, oldest first.
 var graveyard: Array[UnitStats] = []
+var stage := 1
+## The game inside the current stage; the last one is the boss.
+var game := 1
+var rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
@@ -36,6 +44,26 @@ func reset() -> void:
 	money = STARTING_MONEY
 	pieces = STARTING_PIECES.duplicate()
 	graveyard.clear()
+	stage = 1
+	game = 1
+	rng.randomize()
+
+
+func is_boss_game() -> bool:
+	return game == GAMES_PER_STAGE
+
+
+## Moves to the next game. Returns true when the whole run is completed.
+func advance() -> bool:
+	game += 1
+	if game > GAMES_PER_STAGE:
+		game = 1
+		stage += 1
+	return stage > STAGE_COUNT
+
+
+func pick_encounter() -> EncounterData:
+	return ENCOUNTERS.pick(stage, is_boss_game(), rng)
 
 
 ## Moves a captured piece from the Stock to the graveyard.

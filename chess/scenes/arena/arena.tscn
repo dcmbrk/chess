@@ -2,7 +2,6 @@
 
 [ext_resource type="TileSet" uid="uid://gsy51mcdujch" path="res://assets/sprites/sprites.tres" id="1_1qjuf"]
 [ext_resource type="Script" uid="uid://brh4p6rthcivm" path="res://scenes/arena/arena.gd" id="1_8trdl"]
-[ext_resource type="PackedScene" uid="uid://u1qjdot2v7ep" path="res://scenes/unit/unit.tscn" id="3_5tue2"]
 [ext_resource type="Script" uid="uid://y8w4rb0qd04q" path="res://components/play_area.gd" id="3_asdgj"]
 [ext_resource type="Script" uid="uid://6omh2knjq23j" path="res://components/unit_grid.gd" id="4_aj7ud"]
 [ext_resource type="Script" uid="uid://c3w2pswmywe0l" path="res://components/tile_highlighter.gd" id="6_jx0ua"]
@@ -10,7 +9,6 @@
 [ext_resource type="Script" uid="uid://c3kvvpgst77kx" path="res://components/unit_spawner.gd" id="9_6w4xk"]
 [ext_resource type="Script" uid="uid://wopted37y6qy" path="res://components/move_highlighter.gd" id="10_mvhl"]
 [ext_resource type="Script" uid="uid://c7f17g8h7fg7m" path="res://components/turn_manager.gd" id="11_trnm"]
-[ext_resource type="Resource" uid="uid://currstgllm6ix" path="res://data/pieces/black_pawn.tres" id="12_bpwn"]
 [ext_resource type="Script" uid="uid://dtqyj7dftdo2c" path="res://components/enemy_controller.gd" id="13_enmy"]
 [ext_resource type="PackedScene" path="res://scenes/ui/battle_result/battle_result.tscn" id="14_rslt"]
 [ext_resource type="Script" uid="uid://cfcu5bfl7xbkc" path="res://components/preparation_phase.gd" id="15_prep"]
@@ -40,21 +38,9 @@ script = ExtResource("3_asdgj")
 unit_grid = NodePath("BoardUnitGrid")
 tile_highlighter = NodePath("TileHighlighter")
 
-[node name="EnemyZoneOverlay" type="Node2D" parent="Board"]
+[node name="EnemyZoneOverlay" type="Node2D" parent="Board" unique_id=1535219564]
 script = ExtResource("16_zone")
 metadata/_custom_type_script = "uid://c08luuwjdbua8"
-
-[node name="BlackPawn1" parent="Board" instance=ExtResource("3_5tue2")]
-position = Vector2(12, 12)
-stats = ExtResource("12_bpwn")
-
-[node name="BlackPawn2" parent="Board" instance=ExtResource("3_5tue2")]
-position = Vector2(20, 12)
-stats = ExtResource("12_bpwn")
-
-[node name="BlackPawn3" parent="Board" instance=ExtResource("3_5tue2")]
-position = Vector2(28, 12)
-stats = ExtResource("12_bpwn")
 
 [node name="Highlight" type="TileMapLayer" parent="Board" unique_id=176524095]
 tile_set = ExtResource("1_1qjuf")
@@ -66,7 +52,7 @@ highlight_layer = NodePath("../Highlight")
 tile = Vector2i(11, 0)
 metadata/_custom_type_script = "uid://c3w2pswmywe0l"
 
-[node name="MoveHints" type="TileMapLayer" parent="Board"]
+[node name="MoveHints" type="TileMapLayer" parent="Board" unique_id=408142670]
 modulate = Color(0.4, 1, 0.5, 0.6)
 tile_set = ExtResource("1_1qjuf")
 
@@ -118,11 +104,11 @@ metadata/_custom_type_script = "uid://c3w2pswmywe0l"
 script = ExtResource("4_aj7ud")
 size = Vector2i(1, 6)
 
-[node name="TurnManager" type="Node" parent="."]
+[node name="TurnManager" type="Node" parent="." unique_id=1492492280]
 script = ExtResource("11_trnm")
 metadata/_custom_type_script = "uid://c7f17g8h7fg7m"
 
-[node name="PreparationPhase" type="Node" parent="." node_paths=PackedStringArray("board", "turn_manager")]
+[node name="PreparationPhase" type="Node" parent="." unique_id=1994854982 node_paths=PackedStringArray("board", "turn_manager")]
 script = ExtResource("15_prep")
 board = NodePath("../Board")
 turn_manager = NodePath("../TurnManager")
@@ -136,14 +122,14 @@ turn_manager = NodePath("../TurnManager")
 preparation = NodePath("../PreparationPhase")
 metadata/_custom_type_script = "uid://cmjxdk0g3g2pg"
 
-[node name="MoveHighlighter" type="Node" parent="." node_paths=PackedStringArray("play_area", "hint_layer")]
+[node name="MoveHighlighter" type="Node" parent="." unique_id=455729553 node_paths=PackedStringArray("play_area", "hint_layer")]
 script = ExtResource("10_mvhl")
 play_area = NodePath("../Board")
 hint_layer = NodePath("../Board/MoveHints")
 tile = Vector2i(11, 0)
 metadata/_custom_type_script = "uid://wopted37y6qy"
 
-[node name="EnemyController" type="Node" parent="." node_paths=PackedStringArray("board", "turn_manager", "unit_mover")]
+[node name="EnemyController" type="Node" parent="." unique_id=1546636836 node_paths=PackedStringArray("board", "turn_manager", "unit_mover")]
 script = ExtResource("13_enmy")
 board = NodePath("../Board")
 turn_manager = NodePath("../TurnManager")
@@ -156,10 +142,10 @@ bench = NodePath("../Bench")
 game_area = NodePath("../Board")
 metadata/_custom_type_script = "uid://c3kvvpgst77kx"
 
-[node name="BattleResult" parent="." instance=ExtResource("14_rslt")]
+[node name="BattleResult" parent="." unique_id=1624582717 instance=ExtResource("14_rslt")]
 
-[node name="PrepPanel" parent="." instance=ExtResource("17_ppnl")]
+[node name="PrepPanel" parent="." unique_id=1628596729 instance=ExtResource("17_ppnl")]
 
-[node name="Hud" parent="." instance=ExtResource("18_hud")]
+[node name="Hud" parent="." unique_id=1082565460 instance=ExtResource("18_hud")]
 
-[node name="GraveyardPanel" parent="." instance=ExtResource("19_grav")]
+[node name="GraveyardPanel" parent="." unique_id=1267382530 instance=ExtResource("19_grav")]

@@ -30,8 +30,12 @@ func _place_unit(tile: Vector2i, stats: UnitStats) -> Unit:
 	return unit
 
 
-func test_units_placed_in_scene_are_registered_in_grid() -> void:
-	assert_eq(grid.units[Vector2i(1, 1)], arena.get_node("Board/BlackPawn1"))
+func test_encounter_pieces_are_spawned_on_their_tiles() -> void:
+	for x in [1, 2, 3]:
+		var unit := grid.units[Vector2i(x, 1)] as Unit
+		assert_not_null(unit)
+		assert_eq(unit.stats.team, UnitStats.Team.BLACK)
+		assert_eq(unit.global_position, board.get_global_from_tile(Vector2i(x, 1)))
 
 
 func test_battle_starts_with_white_after_go() -> void:
