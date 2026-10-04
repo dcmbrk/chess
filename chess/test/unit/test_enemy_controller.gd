@@ -15,6 +15,7 @@ func before_each() -> void:
 	enemy = arena.get_node("EnemyController")
 	enemy.think_delay = 0.0
 	turn_manager = arena.turn_manager
+	arena.preparation.start_battle()
 
 
 func _black_tiles() -> Array[Vector2i]:

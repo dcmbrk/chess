@@ -27,6 +27,7 @@ func test_popup_shows_when_battle_ends() -> void:
 	var arena: Arena = ARENA.instantiate()
 	add_child_autofree(arena)
 	var grid := arena.board.unit_grid
+	arena.preparation.start_battle()
 
 	for tile: Vector2i in grid.units:
 		var unit := grid.units[tile] as Unit

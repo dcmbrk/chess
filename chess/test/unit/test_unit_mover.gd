@@ -18,6 +18,7 @@ func before_each() -> void:
 	grid = board.unit_grid
 	unit_mover = arena.unit_mover
 	turn_manager = arena.turn_manager
+	arena.preparation.start_battle()
 
 
 func _place_unit(tile: Vector2i, stats: UnitStats) -> Unit:
@@ -35,7 +36,7 @@ func test_units_placed_in_scene_are_registered_in_grid() -> void:
 	assert_eq(grid.units[Vector2i(1, 1)], arena.get_node("Board/BlackPawn1"))
 
 
-func test_arena_starts_battle_with_white() -> void:
+func test_battle_starts_with_white_after_go() -> void:
 	assert_true(turn_manager.active)
 	assert_eq(turn_manager.current_team, UnitStats.Team.WHITE)
 

@@ -7,6 +7,7 @@ signal unit_captured(unit: Unit)
 @export var board: PlayArea
 @export var turn_manager: TurnManager
 @export var player_team := UnitStats.Team.WHITE
+@export var preparation: PreparationPhase
 
 
 func _ready() -> void:
@@ -49,6 +50,10 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 
 func _is_battle_active() -> bool:
 	return turn_manager != null and turn_manager.active
+
+
+func _is_preparing() -> bool:
+	return preparation != null and preparation.active
 
 
 func _register_unit(unit: Unit) -> void:
@@ -125,6 +130,12 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 		if not is_board_move or not is_player_unit or not perform_board_move(unit, old_tile, new_tile):
 			_reset_unit_to_starting_position(starting_position, unit)
 		return
+	
+	if _is_preparing() and (old_area == board or new_area == board):
+		var swapped := new_area.unit_grid.units[new_tile] as Unit
+		if not preparation.can_drop(unit, old_area == board, new_area == board, new_tile, swapped):
+			_reset_unit_to_starting_position(starting_position, unit)
+			return
 	
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_unit: Unit = new_area.unit_grid.units[new_tile]
