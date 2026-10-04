@@ -1,6 +1,7 @@
 class_name UnitMover
 extends Node
 
+## [param by] is null when a Hunter tile destroyed the unit.
 signal unit_captured(unit: Unit, by: Unit)
 ## The player's pawn reached the last row; call [method finish_promotion] with one of [param options].
 signal promotion_requested(unit: Unit, options: Array[Resource])
@@ -78,6 +79,12 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		Sfx.play("move")
 	
 	_move_unit(unit, board, to)
+	if board_state.is_trap_for(to, unit.stats.team):
+		_destroy_on_trap(unit, to)
+		turn_manager.end_turn(get_rules_board())
+		return true
+	_apply_landing_tile(unit, to)
+	
 	var promotion := MoveRules.get_promotion(board_state, unit.stats, to)
 	if promotion and _should_ask_promotion(unit):
 		# The turn ends once the player picked the new piece.
@@ -107,6 +114,23 @@ func finish_promotion(choice: UnitStats) -> void:
 	turn_manager.end_turn(get_rules_board())
 
 
+## Hunter tile: the unit is destroyed (it counts as captured, by nobody).
+func _destroy_on_trap(unit: Unit, tile: Vector2i) -> void:
+	board.unit_grid.remove_unit(tile)
+	unit_captured.emit(unit, null)
+	unit.queue_free()
+	Sfx.play("capture")
+	ScreenEffects.shake()
+
+
+## Benediction tile: the player's unit ending its move there earns money.
+func _apply_landing_tile(unit: Unit, tile: Vector2i) -> void:
+	var special := board.unit_grid.special_tiles.get(tile) as SpecialTileData
+	if special and special.effect == SpecialTileData.Effect.BENEDICTION and unit.stats.team == player_team:
+		RunState.add_money(SpecialTileData.BENEDICTION_MONEY)
+		Sfx.play("buy")
+
+
 func _should_ask_promotion(unit: Unit) -> bool:
 	return ask_player_promotion and unit.stats.team == player_team \
 			and not unit.stats.promotion_options.is_empty()
@@ -127,6 +151,7 @@ func perform_deploy(unit: Unit, to: Vector2i) -> bool:
 	
 	_move_unit(unit, board, to)
 	Sfx.play("move")
+	_apply_landing_tile(unit, to)
 	turn_manager.end_turn(get_rules_board())
 	return true
 

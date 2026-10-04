@@ -98,16 +98,18 @@ func test_reinforcements_add_a_board_slot() -> void:
 	assert_eq(RunState.get_board_slots(), RunState.STARTING_MAX_BOARD_PIECES + 1)
 
 
-# --- Shop offers ---
+# --- Shop items ---
 
-func test_restock_offers_distinct_gambits() -> void:
-	RunState.restock_shop()
-	
-	var seen := {}
-	for offer in RunState.gambit_offers:
-		assert_not_null(offer)
-		assert_false(seen.has(offer), "no duplicate offers")
-		seen[offer] = true
+func _offered_gambits() -> Array:
+	return RunState.item_offers.filter(func(item: Resource) -> bool: return item is GambitData)
+
+
+func test_restock_never_offers_the_same_gambit_twice() -> void:
+	for i in 20:
+		RunState.restock_shop()
+		var gambits := _offered_gambits()
+		for gambit in gambits:
+			assert_eq(gambits.count(gambit), 1)
 
 
 func test_owned_gambits_are_not_offered() -> void:
@@ -115,45 +117,46 @@ func test_owned_gambits_are_not_offered() -> void:
 	
 	for i in 20:
 		RunState.restock_shop()
-		for offer in RunState.gambit_offers:
+		for offer in _offered_gambits():
 			assert_does_not_have(RunState.gambits, offer)
 
 
-func test_slots_stay_empty_when_pool_is_exhausted() -> void:
+func test_items_become_pieces_when_every_gambit_is_owned() -> void:
 	RunState.gambits = RunState.GAMBIT_POOL.duplicate()
 	
 	RunState.restock_shop()
 	
-	assert_eq(RunState.gambit_offers, [null, null, null] as Array[GambitData])
+	for item in RunState.item_offers:
+		assert_true(item is UnitStats)
 
 
-func test_buy_gambit() -> void:
-	RunState.gambit_offers = [ROYAL_TAX, null, null]
+func test_buy_gambit_item() -> void:
+	RunState.item_offers = [ROYAL_TAX, null, null]
 	RunState.money = 10
 	watch_signals(RunState)
 	
-	assert_true(RunState.buy_gambit(0))
+	assert_true(RunState.buy_item(0))
 	assert_eq(RunState.money, 2)
 	assert_eq(RunState.gambits, [ROYAL_TAX] as Array[GambitData])
-	assert_null(RunState.gambit_offers[0])
+	assert_null(RunState.item_offers[0])
 	assert_signal_emitted(RunState, "gambits_changed")
 
 
 func test_cannot_buy_gambit_without_money() -> void:
-	RunState.gambit_offers = [ROYAL_TAX, null, null]
+	RunState.item_offers = [ROYAL_TAX, null, null]
 	RunState.money = 7
 	
-	assert_false(RunState.buy_gambit(0))
-	assert_false(RunState.buy_gambit(1), "empty slot")
+	assert_false(RunState.buy_item(0))
+	assert_false(RunState.buy_item(1), "empty slot")
 
 
 func test_cannot_own_more_than_max_gambits() -> void:
-	RunState.gambit_offers = [ROYAL_TAX, null, null]
+	RunState.item_offers = [ROYAL_TAX, null, null]
 	RunState.money = 100
 	for i in RunState.MAX_GAMBITS:
 		RunState.gambits.append(BUG_CATCHER)
 	
-	assert_false(RunState.buy_gambit(0))
+	assert_false(RunState.buy_item(0))
 
 
 func test_reset_clears_gambits() -> void:
@@ -166,26 +169,25 @@ func test_reset_clears_gambits() -> void:
 
 # --- UI ---
 
-func test_shop_shows_gambit_offers() -> void:
+func test_shop_shows_gambit_items() -> void:
 	RunState.money = 100
 	var screen: ShopScreen = SHOP_SCREEN.instantiate()
 	screen.next_scene = ""
 	add_child_autofree(screen)
+	RunState.item_offers = [ROYAL_TAX, null, null]
+	screen._refresh()
 	
-	assert_eq(screen.gambit_offers.get_child_count(), RunState.SHOP_SIZE)
-	var first: Button = screen.gambit_offers.get_child(0)
-	assert_eq(first.text, "$%d" % RunState.gambit_offers[0].price)
-	first.mouse_entered.emit()
-	assert_true(Tooltip.is_showing())
-	assert_eq(Tooltip.title.text, RunState.gambit_offers[0].display_name)
-	assert_eq(Tooltip.body.text, RunState.gambit_offers[0].description)
-	first.mouse_exited.emit()
+	var card := screen.item_buttons[0]
+	assert_eq(screen.item_tags[0].text, "$%d" % ROYAL_TAX.price)
+	card.mouse_entered.emit()
+	assert_eq(Tooltip.title.text, ROYAL_TAX.display_name)
+	assert_eq(Tooltip.body.text, ROYAL_TAX.description)
+	card.mouse_exited.emit()
 	
-	var gambit := RunState.gambit_offers[0]
-	first.pressed.emit()
+	card.pressed.emit()
 	
-	assert_has(RunState.gambits, gambit)
-	assert_eq((screen.gambit_offers.get_child(0) as Button).text, "Sold")
+	assert_has(RunState.gambits, ROYAL_TAX)
+	assert_eq(screen.item_tags[0].text, "Sold")
 
 
 func test_hud_shows_owned_gambits() -> void:
@@ -193,10 +195,10 @@ func test_hud_shows_owned_gambits() -> void:
 	var bar: GambitBar = hud.get_node("GambitBar")
 	assert_eq(bar.get_child_count(), 0)
 	
-	RunState.gambit_offers = [ROYAL_TAX, PIGGY_BANK, null]
+	RunState.item_offers = [ROYAL_TAX, PIGGY_BANK, null]
 	RunState.money = 100
-	RunState.buy_gambit(0)
-	RunState.buy_gambit(1)
+	RunState.buy_item(0)
+	RunState.buy_item(1)
 	
 	assert_eq(bar.get_child_count(), 2)
 	(bar.get_child(0) as TextureRect).mouse_entered.emit()

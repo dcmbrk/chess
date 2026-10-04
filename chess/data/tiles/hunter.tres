@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SpecialTileData" format=3]
+
+[ext_resource type="Script" path="res://data/tiles/special_tile_data.gd" id="1_tile"]
+[ext_resource type="Texture2D" uid="uid://bwn13b8sc85f5" path="res://assets/sprites/tiles/hunter_tile.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_tile")
+display_name = "Hunter"
+description = "An enemy piece moving here is destroyed."
+effect = 2
+price = 6
+texture = ExtResource("2_tex")

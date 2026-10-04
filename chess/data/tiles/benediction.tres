@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SpecialTileData" format=3]
+
+[ext_resource type="Script" path="res://data/tiles/special_tile_data.gd" id="1_tile"]
+[ext_resource type="Texture2D" uid="uid://cqflpv7l7of5n" path="res://assets/sprites/tiles/benediction_tile.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_tile")
+display_name = "Benediction"
+description = "Your piece ending a move here earns +$1."
+effect = 1
+price = 4
+texture = ExtResource("2_tex")

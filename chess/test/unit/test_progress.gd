@@ -109,11 +109,10 @@ func test_piece_wheels_count_a_run_and_discover_the_results() -> void:
 
 func test_buying_discovers() -> void:
 	RunState.money = 100
-	RunState.shop_offers = [WHITE_QUEEN, null, null]
-	RunState.gambit_offers = [ROYAL_TAX, null, null]
+	RunState.item_offers = [WHITE_QUEEN, ROYAL_TAX, null]
 	
-	RunState.buy_offer(0)
-	RunState.buy_gambit(0)
+	RunState.buy_item(0)
+	RunState.buy_item(1)
 	
 	assert_true(Progress.is_discovered(WHITE_QUEEN))
 	assert_true(Progress.is_discovered(ROYAL_TAX))

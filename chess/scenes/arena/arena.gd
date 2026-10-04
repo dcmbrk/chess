@@ -23,6 +23,8 @@ const MAIN_MENU_SCENE := "res://scenes/main-menu/main_menu.tscn"
 @onready var prep_panel: PrepPanel = $PrepPanel
 @onready var enemy_zone_overlay: EnemyZoneOverlay = $Board/EnemyZoneOverlay
 @onready var cursed_tiles_overlay: CursedTilesOverlay = $Board/CursedTilesOverlay
+@onready var special_tiles_overlay: SpecialTilesOverlay = $Board/SpecialTilesOverlay
+@onready var tile_tray: TileTray = $TileTray
 @onready var boss_label: BossLabel = $Hud/BossLabel
 @onready var promotion_panel: PromotionPanel = $PromotionPanel
 @onready var victory_panel: VictoryPanel = $VictoryPanel
@@ -58,6 +60,9 @@ func _ready() -> void:
 		unit_spawner.spawn_unit(piece)
 	
 	preparation.max_pieces = RunState.get_board_slots()
+	board.unit_grid.special_tiles = RunState.placed_tiles.duplicate()
+	board.unit_grid.special_tiles_owner = preparation.player_team
+	special_tiles_overlay.queue_redraw()
 	if not boss and RunState.is_boss_game():
 		boss = RunState.boss
 	if boss:
@@ -78,7 +83,9 @@ func _on_unit_captured(unit: Unit, by: Unit) -> void:
 		RunState.lose_piece(unit.get_run_stats())
 	else:
 		captured_enemies += 1
-		RunState.add_money(RunState.get_capture_bonus(by.stats, unit.stats))
+		# by is null when a trap tile destroyed the unit.
+		if by:
+			RunState.add_money(RunState.get_capture_bonus(by.stats, unit.stats))
 	
 	if boss:
 		boss.on_unit_captured(self, unit, by)

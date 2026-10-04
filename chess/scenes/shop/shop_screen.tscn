@@ -2,53 +2,103 @@
 
 [ext_resource type="Script" path="res://scenes/shop/shop_screen.gd" id="1_shop"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://components/background_skin.gd" id="3_bg"]
+[ext_resource type="Script" path="res://components/slot_holder_skin.gd" id="4_holder"]
+[ext_resource type="Script" path="res://components/board_skin.gd" id="5_board"]
+[ext_resource type="Script" path="res://components/enemy_zone_overlay.gd" id="6_zone"]
+[ext_resource type="Script" path="res://scenes/shop/parts/placed_tiles_preview.gd" id="7_tiles"]
+[ext_resource type="Script" path="res://scenes/shop/parts/price_tag.gd" id="8_tag"]
+[ext_resource type="Script" path="res://scenes/shop/parts/outline_button.gd" id="9_obutton"]
+[ext_resource type="Script" path="res://scenes/shop/parts/outline_panel.gd" id="10_opanel"]
+[ext_resource type="Script" path="res://scenes/shop/parts/dotted_line.gd" id="11_dots"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 4.0
-content_margin_top = 2.0
-content_margin_right = 4.0
-content_margin_bottom = 3.0
-bg_color = Color(0.55, 0.27, 0.3, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.93, 0.89, 0.78, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+content_margin_left = 0
+content_margin_top = 0
+content_margin_right = 0
+content_margin_bottom = 0
+bg_color = Color(0.66, 0.33, 0.35, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-content_margin_left = 2.0
-content_margin_top = 1.0
-content_margin_right = 2.0
-content_margin_bottom = 1.0
-bg_color = Color(0.93, 0.89, 0.78, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_row"]
+content_margin_left = 0
+content_margin_top = 0
+content_margin_right = 0
+content_margin_bottom = 0
+bg_color = Color(0.5, 0.22, 0.25, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-content_margin_left = 2.0
-content_margin_top = 1.0
-content_margin_right = 2.0
-content_margin_bottom = 1.0
-bg_color = Color(1, 0.97, 0.88, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
+content_margin_left = 0
+content_margin_top = 0
+content_margin_right = 0
+content_margin_bottom = 0
+bg_color = Color(0.95, 0.91, 0.8, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_disabled"]
-content_margin_left = 2.0
-content_margin_top = 1.0
-content_margin_right = 2.0
-content_margin_bottom = 1.0
-bg_color = Color(0.45, 0.43, 0.4, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_blue"]
+content_margin_left = 1
+content_margin_top = 0
+content_margin_right = 1
+content_margin_bottom = 0
+bg_color = Color(0.35, 0.44, 0.66, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_next"]
-content_margin_left = 3.0
-content_margin_top = 1.0
-content_margin_right = 3.0
-content_margin_bottom = 1.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_blue_hover"]
+content_margin_left = 1
+content_margin_top = 0
+content_margin_right = 1
+content_margin_bottom = 0
+bg_color = Color(0.42, 0.52, 0.76, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rose"]
+content_margin_left = 1
+content_margin_top = 0
+content_margin_right = 1
+content_margin_bottom = 0
+bg_color = Color(0.72, 0.39, 0.42, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rose_hover"]
+content_margin_left = 1
+content_margin_top = 0
+content_margin_right = 1
+content_margin_bottom = 0
+bg_color = Color(0.8, 0.46, 0.49, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_green"]
+content_margin_left = 2
+content_margin_top = 0
+content_margin_right = 2
+content_margin_bottom = 0
 bg_color = Color(0.3, 0.55, 0.35, 1)
+anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_next_hover"]
-content_margin_left = 3.0
-content_margin_top = 1.0
-content_margin_right = 3.0
-content_margin_bottom = 1.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_green_hover"]
+content_margin_left = 2
+content_margin_top = 0
+content_margin_right = 2
+content_margin_bottom = 0
 bg_color = Color(0.38, 0.66, 0.43, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_disabled"]
+content_margin_left = 1
+content_margin_top = 0
+content_margin_right = 1
+content_margin_bottom = 0
+bg_color = Color(0.45, 0.43, 0.4, 1)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice"]
+content_margin_left = 3
+content_margin_top = 2
+content_margin_right = 3
+content_margin_bottom = 3
+bg_color = Color(0.66, 0.33, 0.35, 1)
+anti_aliasing = false
 
 [node name="ShopScreen" type="Control" groups=["run_scenes"]]
 layout_mode = 3
@@ -59,97 +109,319 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_shop")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="BackgroundSkin" type="Node2D" parent="."]
+script = ExtResource("3_bg")
+
+[node name="BenchSkin" type="Node2D" parent="."]
+position = Vector2(8, 16)
+script = ExtResource("4_holder")
+
+[node name="StockIcons" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 8
+offset_top = 16
+offset_right = 16
+offset_bottom = 64
+mouse_filter = 2
+
+[node name="RelicSkin" type="Node2D" parent="."]
+position = Vector2(144, 16)
+script = ExtResource("4_holder")
+panel_color = Color(0.57, 0.33, 0.32, 1)
+border_color = Color(0.95, 0.9, 0.78, 1)
+shadow_color = Color(0, 0, 0, 0)
+
+[node name="BoardPreview" type="Node2D" parent="."]
+position = Vector2(33, 12)
+scale = Vector2(0.75, 0.75)
+
+[node name="BoardSkin" type="Node2D" parent="BoardPreview"]
+script = ExtResource("5_board")
+
+[node name="PlacedTiles" type="Node2D" parent="BoardPreview"]
+script = ExtResource("7_tiles")
+
+[node name="EnemyZoneOverlay" type="Node2D" parent="BoardPreview"]
+script = ExtResource("6_zone")
+
+[node name="InfoPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 22
+offset_top = 50
+offset_right = 70
+offset_bottom = 79
+theme_override_styles/panel = SubResource("StyleBoxFlat_info")
+script = ExtResource("10_opanel")
+outline_color = Color(0.55, 0.27, 0.3, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InfoPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 2.0
+offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.13, 0.12, 0.16, 1)
+theme_override_constants/separation = 0
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 8.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="PanelContainer" parent="CenterContainer"]
+[node name="InfoTitle" type="Label" parent="InfoPanel/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="Title" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
-theme_override_font_sizes/font_size = 6
-text = "Shop"
+theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_font_sizes/font_size = 4
+text = "Prepare your strategy!"
 horizontal_alignment = 1
 
-[node name="OffersRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-theme_override_constants/separation = 6
-
-[node name="GambitOffers" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer/OffersRow"]
+[node name="InfoBody" type="Label" parent="InfoPanel/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 3
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ShopFrame" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 72
+offset_top = 6
+offset_right = 139
+offset_bottom = 67
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+script = ExtResource("10_opanel")
+outline_width = 0.75
+
+[node name="Subtitle" type="Label" parent="."]
+layout_mode = 0
+offset_left = 72
+offset_top = 10.5
+offset_right = 139
+offset_bottom = 15
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 3
+text = "UPGRADE YOUR RUN!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ItemRow" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 75
+offset_top = 15
+offset_right = 136
+offset_bottom = 32
+theme_override_styles/panel = SubResource("StyleBoxFlat_row")
+
+[node name="Separator" type="Node2D" parent="."]
+position = Vector2(76, 33.5)
+script = ExtResource("11_dots")
+length = 59.0
+
+[node name="TokenRow" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 85
+offset_top = 35
+offset_right = 126
+offset_bottom = 51
+theme_override_styles/panel = SubResource("StyleBoxFlat_row")
+
+[node name="UpgradeRow" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 75
+offset_top = 53
+offset_right = 136
+offset_bottom = 65
+theme_override_styles/panel = SubResource("StyleBoxFlat_row")
+
+[node name="Banner" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 88
+offset_top = 2
+offset_right = 123
+offset_bottom = 10
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+script = ExtResource("10_opanel")
+outline_width = 0.75
+
+[node name="Label" type="Label" parent="Banner"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 5
+text = "SHOP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RerollButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 76
+offset_top = 18
+offset_right = 90
+offset_bottom = 24
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_hover_color = Color(1, 0.96, 0.85, 1)
+theme_override_colors/font_pressed_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_focus_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_disabled_color = Color(0.75, 0.7, 0.62, 1)
+theme_override_font_sizes/font_size = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_blue")
+theme_override_styles/hover = SubResource("StyleBoxFlat_blue_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_blue")
+theme_override_styles/focus = SubResource("StyleBoxFlat_blue_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
+script = ExtResource("9_obutton")
+text = "Reroll"
+
+[node name="RerollTag" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+script = ExtResource("8_tag")
+background = Color(0.18, 0.25, 0.45, 1)
+text = "$2"
+
+[node name="UpgradeInfo" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 53.0
+offset_right = 101.0
+offset_bottom = 65.0
+alignment = 1
+theme_override_constants/separation = 0
+
+[node name="UpgradeLabel" type="Label" parent="UpgradeInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 2
+text = "Max Piece on Board"
+horizontal_alignment = 1
+
+[node name="UpgradeCount" type="Label" parent="UpgradeInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 4
+text = "3/10"
+horizontal_alignment = 1
+
+[node name="UpgradeButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 102
+offset_top = 54
+offset_right = 134
+offset_bottom = 61
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_hover_color = Color(1, 0.96, 0.85, 1)
+theme_override_colors/font_pressed_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_focus_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_disabled_color = Color(0.75, 0.7, 0.62, 1)
+theme_override_font_sizes/font_size = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_rose")
+theme_override_styles/hover = SubResource("StyleBoxFlat_rose_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rose")
+theme_override_styles/focus = SubResource("StyleBoxFlat_rose_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
+script = ExtResource("9_obutton")
+text = "Upgrade"
+
+[node name="UpgradeTag" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+script = ExtResource("8_tag")
+text = "$10"
+
+[node name="Slots" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NextButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 95
+offset_top = 69
+offset_right = 119
+offset_bottom = 78
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_hover_color = Color(1, 0.96, 0.85, 1)
+theme_override_colors/font_pressed_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_focus_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_colors/font_disabled_color = Color(0.75, 0.7, 0.62, 1)
+theme_override_font_sizes/font_size = 5
+theme_override_styles/normal = SubResource("StyleBoxFlat_green")
+theme_override_styles/hover = SubResource("StyleBoxFlat_green_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_green")
+theme_override_styles/focus = SubResource("StyleBoxFlat_green_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_disabled")
+script = ExtResource("9_obutton")
+text = "NEXT!"
+
+[node name="ChoicePanel" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ChoicePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="CenterContainer" type="CenterContainer" parent="ChoicePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="ChoicePanel/CenterContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_choice")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChoicePanel/CenterContainer/PanelContainer"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="Offers" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer/OffersRow"]
+[node name="ChoiceTitle" type="Label" parent="ChoicePanel/CenterContainer/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 5
+text = "Token"
+horizontal_alignment = 1
 
-[node name="Actions" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="ChoiceHint" type="Label" parent="ChoicePanel/CenterContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 0.8)
+theme_override_font_sizes/font_size = 3
+text = "Keep one"
+horizontal_alignment = 1
+
+[node name="ChoiceOptions" type="HBoxContainer" parent="ChoicePanel/CenterContainer/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 2
-
-[node name="RerollButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/Actions"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_hover_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_pressed_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_focus_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_font_sizes/font_size = 5
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
-theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
-text = "Reroll $2"
-
-[node name="UpgradeButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/Actions"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_hover_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_pressed_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_colors/font_focus_color = Color(0.55, 0.27, 0.3, 1)
-theme_override_font_sizes/font_size = 5
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
-theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
-text = "+1 Slot $10"
-
-[node name="NextButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/Actions"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 5
-theme_override_styles/normal = SubResource("StyleBoxFlat_next")
-theme_override_styles/hover = SubResource("StyleBoxFlat_next_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_next")
-theme_override_styles/focus = SubResource("StyleBoxFlat_next_hover")
-text = "Next!"
+theme_override_constants/separation = 3
 
 [node name="Hud" parent="." instance=ExtResource("2_hud")]

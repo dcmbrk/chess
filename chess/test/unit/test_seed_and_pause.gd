@@ -40,8 +40,8 @@ func _snapshot_run(seed_value: int) -> Array:
 	var bosses := [RunState.boss]
 	var encounter := RunState.pick_encounter()
 	RunState.restock_shop()
-	var offers := RunState.shop_offers.duplicate()
-	var gambit_offers := RunState.gambit_offers.duplicate()
+	var offers := RunState.token_offers.duplicate()
+	var gambit_offers := RunState.item_offers.duplicate()
 	for i in RunState.GAMES_PER_STAGE:
 		RunState.advance()
 	bosses.append(RunState.boss)

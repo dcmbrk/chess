@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SpecialTileData" format=3]
+
+[ext_resource type="Script" path="res://data/tiles/special_tile_data.gd" id="1_tile"]
+[ext_resource type="Texture2D" uid="uid://dlfvd6b3clrrs" path="res://assets/sprites/tiles/protection_tile.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_tile")
+display_name = "Protection"
+description = "Your piece standing here can't be captured."
+price = 5
+texture = ExtResource("2_tex")

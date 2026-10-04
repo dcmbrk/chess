@@ -9,10 +9,11 @@ const DEFAULT_PATH := "user://save.json"
 ## Tests point this at a throwaway file.
 var path := DEFAULT_PATH
 
-## Resource paths of the discovered pieces, gambits and bosses.
+## Resource paths of the discovered pieces, gambits, bosses and tiles.
 var pieces: Array[String] = []
 var gambits: Array[String] = []
 var bosses: Array[String] = []
+var tiles: Array[String] = []
 var runs_started := 0
 var runs_won := 0
 var best_stage := 0
@@ -59,6 +60,7 @@ func clear() -> void:
 	pieces.clear()
 	gambits.clear()
 	bosses.clear()
+	tiles.clear()
 	runs_started = 0
 	runs_won = 0
 	best_stage = 0
@@ -79,6 +81,7 @@ func load_progress() -> void:
 	pieces.assign(data.get("pieces", []))
 	gambits.assign(data.get("gambits", []))
 	bosses.assign(data.get("bosses", []))
+	tiles.assign(data.get("tiles", []))
 	runs_started = int(data.get("runs_started", 0))
 	runs_won = int(data.get("runs_won", 0))
 	best_stage = int(data.get("best_stage", 0))
@@ -94,6 +97,7 @@ func save_progress() -> void:
 		"pieces": pieces,
 		"gambits": gambits,
 		"bosses": bosses,
+		"tiles": tiles,
 		"runs_started": runs_started,
 		"runs_won": runs_won,
 		"best_stage": best_stage,
@@ -107,6 +111,8 @@ func _list_for(resource: Resource) -> Array[String]:
 		return gambits
 	if resource is BossData:
 		return bosses
+	if resource is SpecialTileData:
+		return tiles
 	assert(false, "Can't discover %s" % resource)
 	return []
 

@@ -1,5 +1,6 @@
 ## Chess movement rules for every piece type.
-## CURSED tiles block a team like a wall, STASIS pieces can't move or be captured.
+## CURSED and Phantom tiles block a team like a wall, STASIS and protected pieces
+## can't be captured (STASIS ones can't move either).
 ## Not implemented: double pawn step, castling, en passant, check.
 class_name MoveRules
 extends RefCounted
@@ -81,7 +82,7 @@ static func _can_enter(board: BoardState, tile: Vector2i, team: UnitStats.Team) 
 
 
 static func _can_capture(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
-	return board.is_enemy(tile, team) and not board.is_frozen(tile)
+	return board.is_enemy(tile, team) and not board.is_frozen(tile) and not board.is_protected(tile)
 
 
 static func _get_pawn_moves(board: BoardState, from: Vector2i, team: UnitStats.Team) -> Array[Vector2i]:

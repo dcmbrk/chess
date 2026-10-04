@@ -10,6 +10,10 @@ var size: Vector2i
 var forbidden_tiles: Dictionary[Vector2i, int] = {}
 ## STASIS: pieces on these tiles can't move and can't be captured.
 var frozen_tiles: Dictionary[Vector2i, bool] = {}
+## Protection tiles: tile -> the team whose piece standing there can't be captured.
+var protected_tiles: Dictionary[Vector2i, int] = {}
+## Hunter tiles: tile -> the team whose piece is destroyed when it moves there.
+var trap_tiles: Dictionary[Vector2i, int] = {}
 ## Teams that can still put a Stock piece on the board, which counts as a move.
 var can_deploy: Dictionary[int, bool] = {}
 
@@ -37,7 +41,8 @@ func set_piece(tile: Vector2i, piece: UnitStats) -> void:
 		_pieces.erase(tile)
 
 
-## Moves the piece (promoting it on the last row) and returns the captured piece, or null.
+## Moves the piece (promoting it on the last row, or losing it to a trap) and
+## returns the captured piece, or null.
 func move_piece(from: Vector2i, to: Vector2i) -> UnitStats:
 	var piece := get_piece(from)
 	assert(piece, "No piece to move at %s!" % from)
@@ -46,6 +51,8 @@ func move_piece(from: Vector2i, to: Vector2i) -> UnitStats:
 	var promotion := MoveRules.get_promotion(self, piece, to)
 	set_piece(from, null)
 	set_piece(to, promotion if promotion else piece)
+	if is_trap_for(to, piece.team):
+		set_piece(to, null)
 	return captured
 
 
@@ -64,3 +71,13 @@ func is_forbidden(tile: Vector2i, team: UnitStats.Team) -> bool:
 
 func is_frozen(tile: Vector2i) -> bool:
 	return frozen_tiles.has(tile)
+
+
+## True when the piece on [param tile] stands on a tile protecting its team.
+func is_protected(tile: Vector2i) -> bool:
+	var piece := get_piece(tile)
+	return piece != null and protected_tiles.get(tile, -1) == piece.team
+
+
+func is_trap_for(tile: Vector2i, team: UnitStats.Team) -> bool:
+	return trap_tiles.get(tile, -1) == team

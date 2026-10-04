@@ -6,7 +6,7 @@ extends BossData
 
 func on_unit_captured(arena: Arena, unit: Unit, by: Unit) -> void:
 	var player_team := arena.preparation.player_team
-	if by.stats.team == player_team or unit.stats.team != player_team:
+	if by == null or by.stats.team == player_team or unit.stats.team != player_team:
 		return
 	
 	var bench_grid: UnitGrid = arena.get_node("Bench").unit_grid

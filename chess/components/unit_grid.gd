@@ -10,6 +10,9 @@ var units: Dictionary
 var forbidden_tiles: Dictionary[Vector2i, int] = {}
 ## STASIS: units on these tiles can't move and can't be captured.
 var frozen_tiles: Dictionary[Vector2i, bool] = {}
+## Special tiles placed by the player, and the player's team (their owner).
+var special_tiles: Dictionary[Vector2i, SpecialTileData] = {}
+var special_tiles_owner := UnitStats.Team.WHITE
 
 
 func _ready() -> void:
@@ -64,6 +67,8 @@ func to_board_state() -> BoardState:
 	var board := BoardState.new(size)
 	board.forbidden_tiles = forbidden_tiles.duplicate()
 	board.frozen_tiles = frozen_tiles.duplicate()
+	for tile in special_tiles:
+		special_tiles[tile].apply_to(board, tile, special_tiles_owner)
 
 	for tile: Vector2i in units:
 		var unit := units[tile] as Unit

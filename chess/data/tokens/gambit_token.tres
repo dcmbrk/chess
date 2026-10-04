@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TokenData" format=3]
+
+[ext_resource type="Script" path="res://data/tokens/token_data.gd" id="1_token"]
+
+[resource]
+script = ExtResource("1_token")
+display_name = "Gambit Token"
+description = "Gachapon: a random rarity, then 3 gambits of it. Keep 1."
+kind = 2
+choices = 3
+price = 6
+icon_region = Rect2(3, 0, 21, 21)

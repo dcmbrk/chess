@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TokenData" format=3]
+
+[ext_resource type="Script" path="res://data/tokens/token_data.gd" id="1_token"]
+
+[resource]
+script = ExtResource("1_token")
+display_name = "Chess Token III"
+description = "Roll 3 random pieces, keep 1."
+choices = 3
+price = 12
+icon_region = Rect2(103, 0, 21, 21)

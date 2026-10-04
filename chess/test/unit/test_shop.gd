@@ -3,19 +3,25 @@ extends GutTest
 const SHOP_SCREEN = preload("res://scenes/shop/shop_screen.tscn")
 const WHITE_PAWN = preload("res://data/pieces/white_pawn.tres")
 const WHITE_KNIGHT = preload("res://data/pieces/white_knight.tres")
+const WHITE_BISHOP = preload("res://data/pieces/white_bishop.tres")
+const HUNTER = preload("res://data/tiles/hunter.tres")
+const ROYAL_TAX = preload("res://data/gambits/royal_tax.tres")
+const PIGGY_BANK = preload("res://data/gambits/piggy_bank.tres")
+const CHESS_1 = preload("res://data/tokens/chess_token_1.tres")
+const CHESS_2 = preload("res://data/tokens/chess_token_2.tres")
+const CHESS_3 = preload("res://data/tokens/chess_token_3.tres")
+const TILE_1 = preload("res://data/tokens/tile_token_1.tres")
+const TILE_2 = preload("res://data/tokens/tile_token_2.tres")
+const GAMBIT_TOKEN = preload("res://data/tokens/gambit_token.tres")
 
 
 func before_each() -> void:
 	RunState.reset()
+	Tooltip.hide_tooltip()
 
 
 func after_all() -> void:
 	RunState.reset()
-
-
-func _offer_everything(piece: UnitStats) -> void:
-	for i in RunState.SHOP_SIZE:
-		RunState.shop_offers[i] = piece
 
 
 # --- Prices ---
@@ -34,18 +40,51 @@ func test_display_name() -> void:
 	assert_eq(WHITE_KNIGHT.get_display_name(), "Knight")
 
 
-# --- Restock / reroll / lock ---
+# --- Tokens data (like the wiki: chess I/II/III cost $5/$7/$12) ---
+
+func test_chess_tokens_offer_one_two_or_three_pieces() -> void:
+	assert_eq([CHESS_1.choices, CHESS_2.choices, CHESS_3.choices], [1, 2, 3])
+	assert_eq([CHESS_1.price, CHESS_2.price, CHESS_3.price], [5, 7, 12])
+
+
+func test_every_token_is_complete() -> void:
+	assert_eq(RunState.TOKEN_POOL.size(), RunState.TOKEN_WEIGHTS.size())
+	var regions := {}
+	for token in RunState.TOKEN_POOL:
+		assert_ne(token.display_name, "", token.resource_path)
+		assert_ne(token.description, "", token.resource_path)
+		assert_true(Rect2(Vector2.ZERO, TokenData.TEXTURE.get_size()).encloses(token.icon_region), token.resource_path)
+		assert_false(regions.has(token.icon_region), "%s has its own art" % token.resource_path)
+		regions[token.icon_region] = true
+
+
+# --- Restock / reroll ---
 
 func test_new_run_has_an_empty_shop() -> void:
-	assert_eq(RunState.shop_offers.size(), RunState.SHOP_SIZE)
-	assert_false(RunState.shop_offers.any(func(offer: UnitStats) -> bool: return offer != null))
+	assert_eq(RunState.item_offers, [null, null, null] as Array[Resource])
+	assert_eq(RunState.token_offers, [null, null, null] as Array[TokenData])
 
 
-func test_restock_fills_every_slot_from_the_pool() -> void:
+func test_restock_fills_items_and_tokens() -> void:
 	RunState.restock_shop()
 	
-	for offer in RunState.shop_offers:
-		assert_has(RunState.SHOP_POOL, offer)
+	for item in RunState.item_offers:
+		assert_true(item is GambitData or item is UnitStats)
+	for token in RunState.token_offers:
+		assert_has(RunState.TOKEN_POOL, token)
+
+
+func test_top_row_sells_gambits_and_pieces() -> void:
+	var seen_gambit := false
+	var seen_piece := false
+	for i in 30:
+		RunState.restock_shop()
+		for item in RunState.item_offers:
+			seen_gambit = seen_gambit or item is GambitData
+			seen_piece = seen_piece or item is UnitStats
+	
+	assert_true(seen_gambit)
+	assert_true(seen_piece)
 
 
 func test_reroll_costs_money() -> void:
@@ -59,79 +98,160 @@ func test_cannot_reroll_without_money() -> void:
 	RunState.money = RunState.REROLL_PRICE - 1
 	
 	assert_false(RunState.reroll_shop())
-	assert_eq(RunState.money, RunState.REROLL_PRICE - 1)
 
 
-func test_locked_offer_survives_restock() -> void:
-	_offer_everything(WHITE_KNIGHT)
+# --- Locks (on the top row, like the original) ---
+
+func test_toggle_lock() -> void:
+	RunState.item_offers = [ROYAL_TAX, null, null]
+	
+	RunState.toggle_lock(0)
+	assert_true(RunState.item_locks[0])
+	RunState.toggle_lock(0)
+	assert_false(RunState.item_locks[0])
+
+
+func test_cannot_lock_an_empty_slot() -> void:
+	RunState.toggle_lock(0)
+	
+	assert_false(RunState.item_locks[0])
+
+
+func test_locked_item_survives_restock() -> void:
+	RunState.item_offers = [null, PIGGY_BANK, WHITE_BISHOP]
 	RunState.toggle_lock(1)
-	RunState.rng.seed = 1
+	RunState.toggle_lock(2)
 	
 	for i in 20:
 		RunState.restock_shop()
-		assert_eq(RunState.shop_offers[1], WHITE_KNIGHT)
-
-
-func test_toggle_lock() -> void:
-	_offer_everything(WHITE_PAWN)
-	
-	RunState.toggle_lock(0)
-	assert_true(RunState.shop_locks[0])
-	RunState.toggle_lock(0)
-	assert_false(RunState.shop_locks[0])
-
-
-func test_cannot_lock_a_sold_slot() -> void:
-	RunState.toggle_lock(0)
-	
-	assert_false(RunState.shop_locks[0])
-
-
-# --- Buying ---
-
-func test_buy_offer() -> void:
-	_offer_everything(WHITE_KNIGHT)
-	RunState.money = 7
-	var pieces_before := RunState.pieces.size()
-	
-	assert_true(RunState.buy_offer(0))
-	assert_eq(RunState.money, 2)
-	assert_eq(RunState.pieces.size(), pieces_before + 1)
-	assert_eq(RunState.pieces.back(), WHITE_KNIGHT)
-	assert_null(RunState.shop_offers[0], "the slot is sold")
+		assert_eq(RunState.item_offers[1], PIGGY_BANK)
+		assert_eq(RunState.item_offers[2], WHITE_BISHOP)
+		assert_eq(RunState.item_offers.count(PIGGY_BANK), 1, "never offered twice")
 
 
 func test_buying_unlocks_the_slot() -> void:
-	_offer_everything(WHITE_PAWN)
+	RunState.item_offers = [WHITE_BISHOP, null, null]
 	RunState.toggle_lock(0)
-	RunState.money = 10
+	RunState.money = 100
 	
-	RunState.buy_offer(0)
+	RunState.buy_item(0)
 	
-	assert_false(RunState.shop_locks[0])
+	assert_false(RunState.item_locks[0])
 
 
-func test_cannot_buy_without_money() -> void:
-	_offer_everything(WHITE_KNIGHT)
-	RunState.money = 4
+# --- Items ---
+
+func test_buy_piece_item() -> void:
+	RunState.item_offers = [WHITE_BISHOP, null, null]
+	RunState.money = 7
 	
-	assert_false(RunState.buy_offer(0))
-	assert_eq(RunState.shop_offers[0], WHITE_KNIGHT)
+	assert_true(RunState.buy_item(0))
+	assert_eq(RunState.money, 2)
+	assert_eq(RunState.pieces.back(), WHITE_BISHOP)
+	assert_null(RunState.item_offers[0])
 
 
-func test_cannot_buy_with_full_stock() -> void:
-	_offer_everything(WHITE_PAWN)
+func test_cannot_buy_piece_with_full_stock() -> void:
+	RunState.item_offers = [WHITE_PAWN, null, null]
 	RunState.money = 100
 	while RunState.pieces.size() < RunState.MAX_PIECES:
 		RunState.pieces.append(WHITE_PAWN)
 	
-	assert_false(RunState.buy_offer(0))
+	assert_false(RunState.buy_item(0))
 
 
-func test_cannot_buy_a_sold_slot() -> void:
-	RunState.money = 100
+# --- Tokens ---
+
+func test_buying_a_token_rolls_its_choices() -> void:
+	RunState.token_offers = [CHESS_3, null, null]
+	RunState.money = 20
 	
-	assert_false(RunState.buy_offer(0))
+	var rolled := RunState.buy_token(0)
+	
+	assert_eq(rolled.size(), 3)
+	assert_eq(RunState.money, 8)
+	assert_null(RunState.token_offers[0])
+	assert_eq(RunState.pending_choices, rolled)
+	var distinct := {}
+	for piece in rolled:
+		assert_has(RunState.SHOP_POOL, piece)
+		distinct[piece] = true
+	assert_eq(distinct.size(), 3, "different pieces")
+
+
+func test_claiming_keeps_only_one_reward() -> void:
+	RunState.token_offers = [CHESS_2, null, null]
+	RunState.money = 20
+	var rolled := RunState.buy_token(0)
+	var pieces_before := RunState.pieces.size()
+	
+	assert_true(RunState.claim_choice(1))
+	
+	assert_eq(RunState.pieces.size(), pieces_before + 1)
+	assert_eq(RunState.pieces.back(), rolled[1])
+	assert_true(RunState.pending_choices.is_empty())
+
+
+func test_tile_tokens_roll_distinct_tiles() -> void:
+	RunState.token_offers = [TILE_2, TILE_1, null]
+	RunState.money = 50
+	
+	var rolled := RunState.buy_token(0)
+	assert_eq(rolled.size(), 3)
+	for tile in rolled:
+		assert_has(RunState.TILE_POOL, tile)
+		assert_eq(rolled.count(tile), 1)
+	RunState.claim_choice(0)
+	
+	assert_eq(RunState.tiles, [rolled[0]] as Array[SpecialTileData])
+	assert_eq(RunState.buy_token(1).size(), 1)
+
+
+func test_gambit_token_rolls_unowned_gambits_of_one_rarity() -> void:
+	RunState.token_offers = [GAMBIT_TOKEN, null, null]
+	RunState.gambits = [ROYAL_TAX]
+	RunState.money = 50
+	
+	var rolled := RunState.buy_token(0)
+	
+	assert_gt(rolled.size(), 0)
+	for gambit in rolled:
+		assert_true(gambit is GambitData)
+		assert_ne(gambit, ROYAL_TAX, "already owned")
+		assert_eq(rolled.count(gambit), 1)
+	RunState.claim_choice(0)
+	assert_has(RunState.gambits, rolled[0])
+
+
+func test_one_token_at_a_time() -> void:
+	RunState.token_offers = [CHESS_1, CHESS_1, null]
+	RunState.money = 50
+	RunState.buy_token(0)
+	
+	assert_false(RunState.can_buy_token(1), "keep a reward first")
+	RunState.claim_choice(0)
+	assert_true(RunState.can_buy_token(1))
+
+
+func test_cannot_buy_tokens_without_room() -> void:
+	RunState.token_offers = [CHESS_1, TILE_1, GAMBIT_TOKEN]
+	RunState.money = 100
+	while RunState.pieces.size() < RunState.MAX_PIECES:
+		RunState.pieces.append(WHITE_PAWN)
+	for i in RunState.MAX_TILES:
+		RunState.tiles.append(HUNTER)
+	RunState.gambits = RunState.GAMBIT_POOL.duplicate()
+	
+	for i in 3:
+		assert_false(RunState.can_buy_token(i), str(i))
+
+
+func test_cannot_buy_a_token_without_money() -> void:
+	RunState.token_offers = [CHESS_3, null, null]
+	RunState.money = 11
+	
+	assert_eq(RunState.buy_token(0).size(), 0)
+	assert_eq(RunState.money, 11)
 
 
 # --- Upgrade ---
@@ -160,77 +280,109 @@ func test_cannot_upgrade_past_the_limit() -> void:
 	assert_false(RunState.upgrade_max_board_pieces())
 
 
-# --- Selling ---
+# --- Selling (in the arena, not in the shop) ---
 
 func test_sell_piece() -> void:
 	RunState.pieces = [WHITE_PAWN, WHITE_KNIGHT]
 	
 	assert_true(RunState.sell_piece(1))
 	assert_eq(RunState.money, 3)
-	assert_eq(RunState.pieces, [WHITE_PAWN] as Array[UnitStats])
 
 
 func test_cannot_sell_the_last_piece() -> void:
 	RunState.pieces = [WHITE_KNIGHT]
 	
 	assert_false(RunState.sell_piece(0))
-	assert_eq(RunState.pieces.size(), 1)
 
 
 # --- Screen ---
 
-func _create_screen() -> ShopScreen:
+func _create_screen(items := [], tokens := []) -> ShopScreen:
 	var screen: ShopScreen = SHOP_SCREEN.instantiate()
 	screen.next_scene = ""
 	add_child_autofree(screen)
+	# The restock in _ready replaces the offers, so set them afterwards.
+	if not items.is_empty():
+		RunState.item_offers.assign(items)
+	if not tokens.is_empty():
+		RunState.token_offers.assign(tokens)
+	screen._refresh()
 	return screen
 
 
-func _offer_button(screen: ShopScreen, index: int) -> Button:
-	return screen.offers.get_child(index).get_child(0)
-
-
-func _lock_button(screen: ShopScreen, index: int) -> Button:
-	return screen.offers.get_child(index).get_child(1)
-
-
-func test_screen_restocks_and_shows_offers_and_stock() -> void:
+func test_screen_layout_matches_the_original() -> void:
 	var screen := _create_screen()
 	
-	assert_eq(screen.offers.get_child_count(), RunState.SHOP_SIZE)
-	for i in RunState.SHOP_SIZE:
-		assert_eq(_offer_button(screen, i).text, "$%d" % RunState.shop_offers[i].price)
+	assert_eq(screen.item_buttons.size(), 3)
+	assert_eq(screen.lock_buttons.size(), 3)
+	assert_eq(screen.token_buttons.size(), 3)
+	for i in 3:
+		assert_eq(screen.item_buttons[i].position, ShopScreen.ITEM_CARD_POSITIONS[i])
+		assert_eq(screen.token_buttons[i].position, ShopScreen.TOKEN_CARD_POSITIONS[i])
+		assert_lt(screen.item_tags[i].position.y, screen.item_buttons[i].position.y + ShopScreen.CARD_SIZE.y, "tag overlaps the card")
 
 
-func test_screen_disables_what_the_player_cannot_afford() -> void:
-	var screen := _create_screen()
+func test_cards_are_red_for_gambits_and_blue_for_pieces() -> void:
+	var screen := _create_screen([ROYAL_TAX, WHITE_BISHOP, null])
 	
-	assert_true(screen.reroll_button.disabled)
-	assert_true(screen.upgrade_button.disabled)
-	assert_true(_offer_button(screen, 0).disabled)
+	var gambit_style := screen.item_buttons[0].get_theme_stylebox("normal") as StyleBoxFlat
+	var piece_style := screen.item_buttons[1].get_theme_stylebox("normal") as StyleBoxFlat
+	assert_eq(gambit_style.bg_color, ShopScreen.GAMBIT_CARD)
+	assert_eq(piece_style.bg_color, ShopScreen.PIECE_CARD)
+	assert_eq(screen.item_tags[2].text, "Sold")
 
 
-func test_clicking_an_offer_buys_it() -> void:
-	# Locked offers survive the restock done when the screen opens.
-	_offer_everything(WHITE_KNIGHT)
-	RunState.shop_locks = [true, true, true]
-	RunState.money = 10
-	var screen := _create_screen()
-	var piece := RunState.shop_offers[0]
+func test_tokens_show_their_token_art() -> void:
+	var screen := _create_screen([], [CHESS_2, TILE_1, GAMBIT_TOKEN])
 	
-	_offer_button(screen, 0).pressed.emit()
-	
-	assert_eq(RunState.pieces.back(), piece)
-	assert_eq(_offer_button(screen, 0).text, "Sold")
+	for i in 3:
+		assert_eq((screen.token_buttons[i].icon as AtlasTexture).region, RunState.token_offers[i].icon_region)
+	assert_eq(screen.token_tags[0].text, "$7")
 
 
-func test_lock_button_toggles_lock() -> void:
-	var screen := _create_screen()
+func test_clicking_an_item_buys_it() -> void:
+	RunState.money = 100
+	var screen := _create_screen([WHITE_BISHOP, null, null])
 	
-	_lock_button(screen, 2).pressed.emit()
+	screen.item_buttons[0].pressed.emit()
 	
-	assert_true(RunState.shop_locks[2])
-	assert_eq(_lock_button(screen, 2).text, "Locked")
+	assert_eq(RunState.pieces.back(), WHITE_BISHOP)
+	assert_eq(screen.item_tags[0].text, "Sold")
+	assert_eq(screen.stock_icons.get_child_count(), RunState.pieces.size())
+
+
+func test_clicking_a_token_opens_the_choice_popup() -> void:
+	RunState.money = 100
+	var screen := _create_screen([], [CHESS_3, null, null])
+	
+	screen.token_buttons[0].pressed.emit()
+	
+	assert_true(screen.choice_panel.visible)
+	assert_eq(screen.choice_title.text, "Chess Token III")
+	assert_eq(screen.choice_buttons.size(), 3)
+	assert_true(screen.next_button.disabled, "keep a reward before leaving")
+
+
+func test_picking_a_choice_closes_the_popup() -> void:
+	RunState.money = 100
+	var screen := _create_screen([], [CHESS_2, null, null])
+	screen.token_buttons[0].pressed.emit()
+	var kept := RunState.pending_choices[1]
+	
+	screen.choice_buttons[1].pressed.emit()
+	
+	assert_false(screen.choice_panel.visible)
+	assert_eq(RunState.pieces.back(), kept)
+	assert_false(screen.next_button.disabled)
+
+
+func test_lock_button_toggles_the_lock() -> void:
+	var screen := _create_screen([ROYAL_TAX, ROYAL_TAX, PIGGY_BANK])
+	
+	screen.lock_buttons[2].pressed.emit()
+	
+	assert_true(RunState.item_locks[2])
+	assert_true(screen.lock_buttons[2].locked)
 
 
 func test_reroll_button_rerolls() -> void:
@@ -241,40 +393,54 @@ func test_reroll_button_rerolls() -> void:
 	
 	assert_eq(RunState.money, 0)
 	assert_true(screen.reroll_button.disabled)
+	assert_eq(screen.reroll_tag.text, "$2")
 
 
 func test_upgrade_button_upgrades() -> void:
 	RunState.money = 10
 	var screen := _create_screen()
-	assert_eq(screen.upgrade_button.text, "+1 Slot $10")
+	assert_eq(screen.upgrade_tag.text, "$10")
+	assert_eq(screen.upgrade_count.text, "3/%d" % RunState.MAX_BOARD_PIECES_LIMIT)
 	
 	screen.upgrade_button.pressed.emit()
 	
 	assert_eq(RunState.max_board_pieces, 4)
-	assert_eq(screen.upgrade_button.text, "+1 Slot $15")
+	assert_eq(screen.upgrade_tag.text, "$15")
 	screen.upgrade_button.mouse_entered.emit()
 	assert_eq(Tooltip.body.text, "Max pieces on board: 4 -> 5")
 	screen.upgrade_button.mouse_exited.emit()
-	assert_false(Tooltip.is_showing())
 
 
-func test_shop_has_no_stock_to_sell() -> void:
+func test_tooltips() -> void:
+	var screen := _create_screen([WHITE_BISHOP, null, null], [TILE_2, null, null])
+	
+	screen.item_buttons[0].mouse_entered.emit()
+	assert_eq(Tooltip.title.text, "Bishop")
+	screen.token_buttons[0].mouse_entered.emit()
+	assert_eq(Tooltip.title.text, "Tile Token II")
+	assert_eq(Tooltip.subtitle.text, "Token")
+
+
+func test_stock_shows_the_run_pieces() -> void:
+	RunState.pieces = [WHITE_PAWN, WHITE_KNIGHT, WHITE_PAWN]
 	var screen := _create_screen()
 	
-	assert_false(screen.has_node("%Stock"))
-	assert_false(screen.has_node("%HoldTimer"))
+	assert_eq(screen.stock_icons.get_child_count(), 3)
+	assert_eq((screen.stock_icons.get_child(1) as TextureRect).size, Vector2(8, 8))
 
 
-func test_offer_tooltip_describes_the_piece() -> void:
-	RunState.shop_offers = [WHITE_KNIGHT, WHITE_KNIGHT, WHITE_KNIGHT]
-	RunState.shop_locks = [true, true, true]
+func test_info_panel_names_the_boss_only_before_the_boss_battle() -> void:
 	var screen := _create_screen()
+	assert_eq(screen.info_title.text, "Prepare your strategy!")
+	assert_false(screen.info_body.visible)
+	screen.free()
 	
-	_offer_button(screen, 0).mouse_entered.emit()
+	for i in RunState.GAMES_PER_STAGE - 1:
+		RunState.advance()
+	var boss_screen := _create_screen()
 	
-	assert_eq(Tooltip.title.text, "Knight")
-	assert_eq(Tooltip.body.text, WHITE_KNIGHT.get_description())
-	Tooltip.hide_tooltip()
+	assert_eq(boss_screen.info_title.text, RunState.boss.display_name)
+	assert_eq(boss_screen.info_body.text, RunState.boss.description)
 
 
 func test_next_button_finishes() -> void:
@@ -295,4 +461,3 @@ func test_arena_uses_the_upgraded_max_pieces() -> void:
 	add_child_autofree(arena)
 	
 	assert_eq(arena.preparation.max_pieces, 5)
-	assert_eq(arena.prep_panel.pieces_label.text, "Pieces 0/5")

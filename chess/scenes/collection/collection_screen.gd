@@ -1,10 +1,10 @@
-## Everything the player discovered: pieces, gambits and bosses.
+## Everything the player discovered: pieces, gambits, bosses and tiles.
 class_name CollectionScreen
 extends Control
 
-enum Tab { PIECES, GAMBITS, BOSSES }
+enum Tab { PIECES, GAMBITS, BOSSES, TILES }
 
-const TAB_NAMES := {Tab.PIECES: "Pieces", Tab.GAMBITS: "Gambits", Tab.BOSSES: "Bosses"}
+const TAB_NAMES := {Tab.PIECES: "Pieces", Tab.GAMBITS: "Gambits", Tab.BOSSES: "Bosses", Tab.TILES: "Tiles"}
 const UNKNOWN_COLOR := Color(0.35, 0.33, 0.38, 1)
 
 @export_file("*.tscn") var back_scene := "res://scenes/main-menu/main_menu.tscn"
@@ -15,6 +15,7 @@ var current_tab := Tab.PIECES
 	Tab.PIECES: %PiecesTab,
 	Tab.GAMBITS: %GambitsTab,
 	Tab.BOSSES: %BossesTab,
+	Tab.TILES: %TilesTab,
 }
 @onready var counter_label: Label = %CounterLabel
 @onready var entries: GridContainer = %Entries
@@ -55,6 +56,8 @@ static func get_entries(tab: Tab) -> Array:
 			return RunState.SHOP_POOL
 		Tab.GAMBITS:
 			return RunState.GAMBIT_POOL
+		Tab.TILES:
+			return RunState.TILE_POOL
 	return RunState.BOSS_POOL
 
 
@@ -68,6 +71,11 @@ func _create_entry(resource: Resource, discovered: bool) -> Button:
 	var entry: Button
 	if resource is UnitStats:
 		entry = UiStyle.create_piece_button(resource, "")
+	elif resource is SpecialTileData:
+		var tile := resource as SpecialTileData
+		entry = UiStyle.create_piece_button(null, "")
+		entry.icon = tile.texture
+		Tooltip.attach(entry, tile.display_name, "Tile", tile.description)
 	elif resource is GambitData:
 		entry = UiStyle.create_piece_button(null, "")
 		entry.icon = (resource as GambitData).create_icon()

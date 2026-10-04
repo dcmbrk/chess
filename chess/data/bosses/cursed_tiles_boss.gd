@@ -1,4 +1,4 @@
-## Random empty tiles become CURSED: the player's pieces can't enter them.
+## Random empty tiles (without a special tile) become CURSED: the player's pieces can't enter them.
 class_name CursedTilesBoss
 extends BossData
 
@@ -9,7 +9,7 @@ func setup_battle(arena: Arena) -> void:
 	var grid := arena.board.unit_grid
 	var empty_tiles: Array[Vector2i] = []
 	for tile: Vector2i in grid.units:
-		if not grid.is_tile_occupied(tile):
+		if not grid.is_tile_occupied(tile) and not grid.special_tiles.has(tile):
 			empty_tiles.append(tile)
 	
 	for i in mini(count, empty_tiles.size()):
