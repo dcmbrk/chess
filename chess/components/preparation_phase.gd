@@ -3,6 +3,7 @@
 class_name PreparationPhase
 extends Node
 
+signal started
 signal pieces_changed(count: int, max_count: int)
 signal battle_started
 
@@ -21,6 +22,7 @@ func _ready() -> void:
 
 func start() -> void:
 	active = true
+	started.emit()
 	_on_unit_grid_changed()
 
 

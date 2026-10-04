@@ -15,13 +15,32 @@ func _ready() -> void:
 	for unit: Unit in units:
 		_register_unit(unit)
 		setup_unit(unit)
+	
+	if turn_manager:
+		turn_manager.turn_started.connect(_update_draggable_units.unbind(1))
+		turn_manager.battle_ended.connect(_update_draggable_units.unbind(1))
+	if preparation:
+		preparation.started.connect(_update_draggable_units)
 
 
 func setup_unit(unit: Unit) -> void:
 	unit.drag_and_drop.drag_started.connect(_on_unit_drag_started.bind(unit))
 	unit.drag_and_drop.drag_canceled.connect(_on_unit_drag_canceled.bind(unit))
 	unit.drag_and_drop.dropped.connect(_on_unit_dropped.bind(unit))
+	unit.drag_and_drop.enabled = can_drag(unit)
 	
+
+
+## The player may only pick up their own pieces, during the preparation
+## or on their own turn.
+func can_drag(unit: Unit) -> bool:
+	if not turn_manager and not preparation:
+		return true
+	if unit.stats.team != player_team:
+		return false
+	if _is_battle_active():
+		return turn_manager.current_team == player_team
+	return _is_preparing()
 
 
 ## Moves a unit that is on the board, following the chess rules.
@@ -54,6 +73,12 @@ func _is_battle_active() -> bool:
 
 func _is_preparing() -> bool:
 	return preparation != null and preparation.active
+
+
+func _update_draggable_units() -> void:
+	for play_area in play_areas:
+		for unit in play_area.unit_grid.get_all_units():
+			unit.drag_and_drop.enabled = can_drag(unit)
 
 
 func _register_unit(unit: Unit) -> void:
@@ -97,6 +122,10 @@ func _move_unit(unit: Unit, play_area: PlayArea, tile: Vector2i) -> void:
 
 func _on_unit_drag_started(unit: Unit) -> void:
 	_set_highlighters(true)
+	
+	# During a battle the held unit stays in the grid so the rules still see it.
+	if _is_battle_active():
+		return
 	
 	var i := _get_play_area_for_position(unit.global_position)
 	if i > -1:
