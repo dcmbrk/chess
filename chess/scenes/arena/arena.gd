@@ -8,7 +8,11 @@ const QUARTER_CELL_SIZE := Vector2(2, 2)
 @onready var unit_mover: UnitMover = $UnitMover
 @onready var unit_spawner: UnitSpawner = $UnitSpawner
 @onready var move_highlighter: MoveHighlighter = $MoveHighlighter
+@onready var turn_manager: TurnManager = $TurnManager
 
 func _ready() -> void:
 	unit_spawner.unit_spawned.connect(unit_mover.setup_unit)
 	unit_spawner.unit_spawned.connect(move_highlighter.setup_unit)
+
+	# TODO: start the battle from the preparation phase's GO button instead.
+	turn_manager.start_battle()

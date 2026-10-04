@@ -1,12 +1,17 @@
 class_name UnitMover
 extends Node
 
+signal unit_captured(unit: Unit)
+
 @export var play_areas: Array[PlayArea]
+@export var board: PlayArea
+@export var turn_manager: TurnManager
 
 
 func _ready() -> void:
 	var units := get_tree().get_nodes_in_group("units")
 	for unit: Unit in units:
+		_register_unit(unit)
 		setup_unit(unit)
 
 
@@ -15,6 +20,43 @@ func setup_unit(unit: Unit) -> void:
 	unit.drag_and_drop.drag_canceled.connect(_on_unit_drag_canceled.bind(unit))
 	unit.drag_and_drop.dropped.connect(_on_unit_dropped.bind(unit))
 	
+
+
+## Moves a unit that is on the board, following the chess rules.
+## Returns false (and changes nothing) if the move is illegal.
+func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
+	# The unit may already be removed from the grid while it is dragged.
+	var board_state := board.unit_grid.to_board_state()
+	board_state.set_piece(from, unit.stats)
+	
+	if not turn_manager.is_legal_move(board_state, from, to):
+		return false
+	
+	if board.unit_grid.units[from] == unit:
+		board.unit_grid.remove_unit(from)
+	
+	var captured := board.unit_grid.units[to] as Unit
+	if captured:
+		board.unit_grid.remove_unit(to)
+		unit_captured.emit(captured)
+		captured.queue_free()
+	
+	_move_unit(unit, board, to)
+	turn_manager.end_turn()
+	return true
+
+
+func _is_battle_active() -> bool:
+	return turn_manager != null and turn_manager.active
+
+
+func _register_unit(unit: Unit) -> void:
+	var i := _get_play_area_for_position(unit.global_position)
+	if i == -1:
+		return
+	
+	var tile := play_areas[i].get_tile_from_global(unit.global_position)
+	play_areas[i].unit_grid.add_unit(tile, unit)
 
 
 func _set_highlighters(enabled: bool) -> void:
@@ -75,6 +117,12 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 	var old_tile := old_area.get_tile_from_global(starting_position)
 	var new_area := play_areas[drop_area_index]
 	var new_tile := new_area.get_hovered_tile()
+	
+	if _is_battle_active() and (old_area == board or new_area == board):
+		var is_board_move := old_area == board and new_area == board
+		if not is_board_move or not perform_board_move(unit, old_tile, new_tile):
+			_reset_unit_to_starting_position(starting_position, unit)
+		return
 	
 	if new_area.unit_grid.is_tile_occupied(new_tile):
 		var old_unit: Unit = new_area.unit_grid.units[new_tile]

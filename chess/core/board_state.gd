@@ -30,6 +30,17 @@ func set_piece(tile: Vector2i, piece: UnitStats) -> void:
 		_pieces.erase(tile)
 
 
+## Moves the piece and returns the captured piece, or null.
+func move_piece(from: Vector2i, to: Vector2i) -> UnitStats:
+	var piece := get_piece(from)
+	assert(piece, "No piece to move at %s!" % from)
+
+	var captured := get_piece(to)
+	set_piece(from, null)
+	set_piece(to, piece)
+	return captured
+
+
 func is_empty(tile: Vector2i) -> bool:
 	return get_piece(tile) == null
 

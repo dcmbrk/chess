@@ -44,3 +44,26 @@ func test_is_enemy() -> void:
 	assert_true(board.is_enemy(Vector2i(0, 0), Team.WHITE))
 	assert_false(board.is_enemy(Vector2i(0, 0), Team.BLACK))
 	assert_false(board.is_enemy(Vector2i(1, 1), Team.WHITE), "empty tile is not an enemy")
+
+
+func test_move_piece_to_empty_tile() -> void:
+	var rook := PieceFactory.make(Type.ROOK)
+	board.set_piece(Vector2i(0, 0), rook)
+	
+	var captured := board.move_piece(Vector2i(0, 0), Vector2i(0, 3))
+	
+	assert_null(captured)
+	assert_true(board.is_empty(Vector2i(0, 0)))
+	assert_eq(board.get_piece(Vector2i(0, 3)), rook)
+
+
+func test_move_piece_returns_captured_piece() -> void:
+	var rook := PieceFactory.make(Type.ROOK)
+	var enemy := PieceFactory.make(Type.PAWN, Team.BLACK)
+	board.set_piece(Vector2i(0, 0), rook)
+	board.set_piece(Vector2i(0, 3), enemy)
+	
+	var captured := board.move_piece(Vector2i(0, 0), Vector2i(0, 3))
+	
+	assert_eq(captured, enemy)
+	assert_eq(board.get_piece(Vector2i(0, 3)), rook)
