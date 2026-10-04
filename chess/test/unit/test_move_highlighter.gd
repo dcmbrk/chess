@@ -10,6 +10,7 @@ var hints: TileMapLayer
 
 
 func before_each() -> void:
+	Settings.move_hints = true
 	arena = ArenaHelper.create_arena(self)
 	board = arena.get_node("Board")
 	highlighter = arena.get_node("MoveHighlighter")

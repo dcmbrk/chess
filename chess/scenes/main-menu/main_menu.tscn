@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bwa57wopd40ky" path="res://assets/images/ui/background.jpg" id="1_fusrs"]
 [ext_resource type="Script" uid="uid://c0is8e4c5i27u" path="res://scenes/main-menu/main_menu.gd" id="1_qhk2d"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings/settings_panel.tscn" id="2_settings"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_title"]
 content_margin_left = 6.0
@@ -290,3 +291,5 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
 theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
 text = "Close"
+
+[node name="SettingsPanel" parent="." instance=ExtResource("2_settings")]

@@ -30,7 +30,7 @@ func _on_turn_started(current_team: UnitStats.Team) -> void:
 		return
 
 	# Not process_always: the enemy waits while the game is paused.
-	await get_tree().create_timer(think_delay, false).timeout
+	await get_tree().create_timer(Settings.get_enemy_delay(think_delay), false).timeout
 
 	if turn_manager.active and turn_manager.current_team == team:
 		play_turn()

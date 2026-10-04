@@ -12,6 +12,7 @@ var knight: Unit
 
 
 func before_each() -> void:
+	Settings.move_hints = true
 	arena = ArenaHelper.create_arena(self)
 	mover = arena.unit_mover
 	grid = arena.board.unit_grid

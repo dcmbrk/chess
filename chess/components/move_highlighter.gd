@@ -26,6 +26,8 @@ func setup_unit(unit: Unit) -> void:
 
 func show_moves(unit: Unit) -> void:
 	clear()
+	if not Settings.move_hints:
+		return
 
 	var from := play_area.get_tile_from_global(unit.global_position)
 	if not unit.stats:

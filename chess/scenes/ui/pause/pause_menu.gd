@@ -16,7 +16,9 @@ var run_start_scene := RUN_START_SCENE
 @onready var pause_button: Button = %PauseButton
 @onready var panel: Control = %Panel
 @onready var resume_button: Button = %ResumeButton
+@onready var settings_button: Button = %SettingsButton
 @onready var main_menu_button: Button = %MainMenuButton
+@onready var settings_panel: SettingsPanel = $SettingsPanel
 @onready var seed_label: Label = %SeedLabel
 @onready var copy_button: Button = %CopyButton
 @onready var restart_label: Label = %RestartLabel
@@ -28,6 +30,7 @@ func _ready() -> void:
 	restart_label.hide()
 	pause_button.pressed.connect(open)
 	resume_button.pressed.connect(close)
+	settings_button.pressed.connect(settings_panel.open)
 	main_menu_button.pressed.connect(go_to_main_menu)
 	copy_button.pressed.connect(copy_seed)
 
@@ -67,6 +70,7 @@ func open() -> void:
 
 
 func close() -> void:
+	settings_panel.hide()
 	panel.hide()
 	get_tree().paused = false
 

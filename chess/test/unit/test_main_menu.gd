@@ -28,12 +28,20 @@ func test_quit_quits() -> void:
 	assert_true(menu.quit_button.pressed.is_connected(get_tree().quit))
 
 
-func test_unfinished_screens_are_disabled_with_a_hint() -> void:
-	for button: Button in [menu.settings_button, menu.collection_button]:
-		assert_true(button.disabled, button.name)
-		button.mouse_entered.emit()
-		assert_eq(Tooltip.body.text, "Coming soon")
-		button.mouse_exited.emit()
+func test_collection_is_disabled_with_a_hint() -> void:
+	assert_true(menu.collection_button.disabled)
+	menu.collection_button.mouse_entered.emit()
+	assert_eq(Tooltip.body.text, "Coming soon")
+	menu.collection_button.mouse_exited.emit()
+
+
+func test_settings_button_opens_the_settings() -> void:
+	assert_false(menu.settings_button.disabled)
+	
+	menu.settings_button.pressed.emit()
+	
+	assert_true(menu.settings_panel.visible)
+	menu.settings_panel.close()
 
 
 func test_credits_open_and_close() -> void:
