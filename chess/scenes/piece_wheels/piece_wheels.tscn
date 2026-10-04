@@ -3,6 +3,9 @@
 [ext_resource type="Script" path="res://scenes/piece_wheels/piece_wheels.gd" id="1_wheels"]
 [ext_resource type="Resource" path="res://data/pieces/white_pawn.tres" id="2_pawn"]
 [ext_resource type="Resource" path="res://data/pieces/white_knight.tres" id="3_knight"]
+[ext_resource type="Resource" path="res://data/pieces/white_bishop.tres" id="4_bishop"]
+[ext_resource type="Resource" path="res://data/pieces/white_rook.tres" id="5_rook"]
+[ext_resource type="Resource" path="res://data/pieces/white_king.tres" id="6_king"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 4.0
@@ -50,8 +53,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wheels")
-pool = Array[Resource]([ExtResource("2_pawn"), ExtResource("3_knight")])
-weights = Array[int]([3, 1])
+pool = Array[Resource]([ExtResource("2_pawn"), ExtResource("3_knight"), ExtResource("4_bishop"), ExtResource("5_rook"), ExtResource("6_king")])
+weights = Array[int]([6, 3, 3, 2, 1])
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1

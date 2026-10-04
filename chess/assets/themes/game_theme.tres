@@ -1,0 +1,18 @@
+[gd_resource type="Theme" format=3]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mbh4x"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 1.0
+bg_color = Color(0.13, 0.12, 0.16, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.93, 0.89, 0.78, 1)
+
+[resource]
+TooltipLabel/colors/font_color = Color(0.93, 0.89, 0.78, 1)
+TooltipLabel/font_sizes/font_size = 5
+TooltipPanel/styles/panel = SubResource("StyleBoxFlat_mbh4x")

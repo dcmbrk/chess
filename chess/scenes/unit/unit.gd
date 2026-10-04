@@ -3,6 +3,8 @@ class_name Unit
 extends Area2D
 
 @export var stats: UnitStats : set = set_stats
+## The stats before a promotion; promotions only last for one battle.
+var promoted_from: UnitStats
 
 @onready var skin: Sprite2D = $Visuals/Skin
 @onready var drag_and_drop: DragAndDrop = $DragAndDrop
@@ -26,6 +28,17 @@ func set_stats(value: UnitStats) -> void:
 		await ready
 	
 	skin.region_rect.position = Vector2(stats.skin_coordinates) * Arena.CELL_SIZE
+
+
+func promote(new_stats: UnitStats) -> void:
+	if not promoted_from:
+		promoted_from = stats
+	stats = new_stats
+
+
+## The piece as it is stored in the run (ignores promotions).
+func get_run_stats() -> UnitStats:
+	return promoted_from if promoted_from else stats
 
 
 func reset_after_dragging(starting_position: Vector2) -> void:

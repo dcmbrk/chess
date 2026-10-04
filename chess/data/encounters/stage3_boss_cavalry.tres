@@ -1,18 +1,19 @@
 [gd_resource type="Resource" script_class="EncounterData" format=3]
 
-[ext_resource type="Script" path="res://data/pieces/unit_stats.gd" id="1_kq68w"]
-[ext_resource type="Resource" path="res://data/pieces/black_knight.tres" id="2_q8t5u"]
-[ext_resource type="Resource" path="res://data/pieces/black_pawn.tres" id="3_4d8ih"]
-[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="4_ddqo0"]
+[ext_resource type="Script" path="res://data/pieces/unit_stats.gd" id="1_q8t5u"]
+[ext_resource type="Resource" path="res://data/pieces/black_knight.tres" id="2_4d8ih"]
+[ext_resource type="Resource" path="res://data/pieces/black_bishop.tres" id="3_ddqo0"]
+[ext_resource type="Resource" path="res://data/pieces/black_pawn.tres" id="4_5a4fk"]
+[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="5_umghm"]
 
 [resource]
-script = ExtResource("4_ddqo0")
+script = ExtResource("5_umghm")
 stage = 3
 is_boss = true
-pieces = Dictionary[Vector2i, ExtResource("1_kq68w")]({
-Vector2i(1, 0): ExtResource("2_q8t5u"),
-Vector2i(1, 1): ExtResource("3_4d8ih"),
-Vector2i(2, 0): ExtResource("2_q8t5u"),
-Vector2i(3, 0): ExtResource("2_q8t5u"),
-Vector2i(3, 1): ExtResource("3_4d8ih")
+pieces = Dictionary[Vector2i, ExtResource("1_q8t5u")]({
+Vector2i(1, 0): ExtResource("2_4d8ih"),
+Vector2i(1, 1): ExtResource("4_5a4fk"),
+Vector2i(2, 0): ExtResource("3_ddqo0"),
+Vector2i(3, 0): ExtResource("2_4d8ih"),
+Vector2i(3, 1): ExtResource("4_5a4fk")
 })

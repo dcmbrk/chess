@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EncounterData" format=3]
+
+[ext_resource type="Script" path="res://data/pieces/unit_stats.gd" id="1_ol8ip"]
+[ext_resource type="Resource" path="res://data/pieces/black_bishop.tres" id="2_psujn"]
+[ext_resource type="Resource" path="res://data/pieces/black_pawn.tres" id="3_g8ung"]
+[ext_resource type="Script" path="res://data/encounters/encounter_data.gd" id="4_u4hs8"]
+
+[resource]
+script = ExtResource("4_u4hs8")
+stage = 3
+pieces = Dictionary[Vector2i, ExtResource("1_ol8ip")]({
+Vector2i(1, 0): ExtResource("2_psujn"),
+Vector2i(1, 1): ExtResource("3_g8ung"),
+Vector2i(2, 1): ExtResource("3_g8ung"),
+Vector2i(3, 0): ExtResource("2_psujn"),
+Vector2i(3, 1): ExtResource("3_g8ung")
+})

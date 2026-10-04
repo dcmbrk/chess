@@ -60,6 +60,17 @@ static func get_forward(team: UnitStats.Team) -> Vector2i:
 	return Vector2i.UP if team == UnitStats.Team.WHITE else Vector2i.DOWN
 
 
+static func is_last_row(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
+	return tile.y == (0 if team == UnitStats.Team.WHITE else board.size.y - 1)
+
+
+## The piece [param piece] becomes after moving to [param to], or null.
+static func get_promotion(board: BoardState, piece: UnitStats, to: Vector2i) -> UnitStats:
+	if piece.promotes_to and is_last_row(board, to, piece.team):
+		return piece.promotes_to
+	return null
+
+
 static func _can_land_on(board: BoardState, tile: Vector2i, team: UnitStats.Team) -> bool:
 	return board.is_in_bounds(tile) and (board.is_empty(tile) or board.is_enemy(tile, team))
 

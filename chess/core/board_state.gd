@@ -30,14 +30,15 @@ func set_piece(tile: Vector2i, piece: UnitStats) -> void:
 		_pieces.erase(tile)
 
 
-## Moves the piece and returns the captured piece, or null.
+## Moves the piece (promoting it on the last row) and returns the captured piece, or null.
 func move_piece(from: Vector2i, to: Vector2i) -> UnitStats:
 	var piece := get_piece(from)
 	assert(piece, "No piece to move at %s!" % from)
 
 	var captured := get_piece(to)
+	var promotion := MoveRules.get_promotion(self, piece, to)
 	set_piece(from, null)
-	set_piece(to, piece)
+	set_piece(to, promotion if promotion else piece)
 	return captured
 
 

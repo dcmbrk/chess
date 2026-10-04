@@ -2,7 +2,11 @@
 
 [ext_resource type="Script" uid="uid://dk0xr1hpopjyi" path="res://data/pieces/unit_stats.gd" id="1_tbelb"]
 
+[ext_resource type="Resource" path="res://data/pieces/white_queen.tres" id="2_promo"]
+
 [resource]
 script = ExtResource("1_tbelb")
 skin_coordinates = Vector2i(0, 2)
+price = 2
+promotes_to = ExtResource("2_promo")
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"

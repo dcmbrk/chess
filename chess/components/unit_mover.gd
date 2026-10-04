@@ -63,6 +63,10 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		captured.queue_free()
 	
 	_move_unit(unit, board, to)
+	var promotion := MoveRules.get_promotion(board_state, unit.stats, to)
+	if promotion:
+		unit.promote(promotion)
+	
 	turn_manager.end_turn(board.unit_grid.to_board_state())
 	return true
 

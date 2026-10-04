@@ -5,6 +5,7 @@ const CELL_SIZE := Vector2(8, 8)
 const HALF_CELL_SIZE := Vector2(4, 4)
 const QUARTER_CELL_SIZE := Vector2(2, 2)
 const PIECE_WHEELS_SCENE := "res://scenes/piece_wheels/piece_wheels.tscn"
+const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
 
 ## The enemies of this battle. Picked from RunState when left empty.
 @export var encounter: EncounterData
@@ -32,7 +33,7 @@ func _ready() -> void:
 	preparation.pieces_changed.connect(prep_panel.update_pieces)
 	preparation.battle_started.connect(_on_battle_started)
 	prep_panel.go_pressed.connect(preparation.start_battle)
-	graveyard_panel.closed.connect(get_tree().reload_current_scene)
+	graveyard_panel.closed.connect(_go_to_shop)
 	
 	if not encounter:
 		encounter = RunState.pick_encounter()
@@ -42,6 +43,7 @@ func _ready() -> void:
 	for piece in RunState.pieces:
 		unit_spawner.spawn_unit(piece)
 	
+	preparation.max_pieces = RunState.max_board_pieces
 	preparation.start()
 
 
@@ -52,7 +54,7 @@ func _on_battle_started() -> void:
 
 func _on_unit_captured(unit: Unit) -> void:
 	if unit.stats.team == preparation.player_team:
-		RunState.lose_piece(unit.stats)
+		RunState.lose_piece(unit.get_run_stats())
 	else:
 		captured_enemies += 1
 
@@ -79,5 +81,8 @@ func _on_battle_result_closed() -> void:
 		graveyard_panel.open()
 		return
 	
-	# TODO: go to the shop instead once it exists.
-	get_tree().reload_current_scene()
+	_go_to_shop()
+
+
+func _go_to_shop() -> void:
+	get_tree().change_scene_to_file(SHOP_SCENE)

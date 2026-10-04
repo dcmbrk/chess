@@ -4,8 +4,7 @@
 
 [resource]
 script = ExtResource("1_stats")
-type = 1
-team = 1
-skin_coordinates = Vector2i(2, 0)
-price = 5
+type = 5
+skin_coordinates = Vector2i(1, 2)
+price = 3
 metadata/_custom_type_script = "uid://dk0xr1hpopjyi"

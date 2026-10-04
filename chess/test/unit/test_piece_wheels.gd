@@ -24,8 +24,12 @@ func _texture_region(rect: TextureRect) -> Rect2:
 
 
 func test_default_pool_is_white_pieces_with_weights() -> void:
-	assert_eq(wheels.pool, [WHITE_PAWN, WHITE_KNIGHT] as Array[UnitStats])
-	assert_eq(wheels.weights, [3, 1] as Array[int])
+	assert_eq(wheels.pool.size(), wheels.weights.size())
+	assert_has(wheels.pool, WHITE_PAWN)
+	assert_has(wheels.pool, WHITE_KNIGHT)
+	for piece in wheels.pool:
+		assert_eq(piece.team, UnitStats.Team.WHITE)
+		assert_ne(piece.type, UnitStats.Type.QUEEN, "no queen from the starting wheels")
 
 
 func test_rolls_one_piece_per_reel_from_the_pool() -> void:
