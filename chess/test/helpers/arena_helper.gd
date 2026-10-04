@@ -35,7 +35,8 @@ static func place_unit(arena: Arena, board_tile: Vector2i, stats: UnitStats) -> 
 	var unit: Unit = UNIT.instantiate()
 	arena.board.unit_grid.add_child(unit)
 	unit.stats = stats
-	arena.unit_mover.setup_unit(unit)
+	# Connects the unit to every component, like a spawned unit.
+	arena.unit_spawner.unit_spawned.emit(unit)
 	_put_on_board(arena, unit, board_tile)
 	return unit
 

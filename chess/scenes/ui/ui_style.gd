@@ -21,7 +21,8 @@ static func create_piece_button(piece: UnitStats, text: String, color := SLOT_CO
 	var button := Button.new()
 	button.icon = piece.create_icon() if piece else null
 	button.text = text
-	button.tooltip_text = piece.get_display_name() if piece else ""
+	if piece:
+		Tooltip.attach(button, piece.get_display_name(), "", piece.get_description())
 	button.add_theme_font_size_override("font_size", 5)
 	button.add_theme_constant_override("h_separation", 0)
 	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:

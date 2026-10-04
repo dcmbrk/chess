@@ -2,6 +2,7 @@
 extends Node
 
 signal money_changed(money: int)
+signal gambits_changed
 
 const STAGE_COUNT := 5
 const GAMES_PER_STAGE := 5
@@ -35,6 +36,15 @@ const STARTING_MAX_BOARD_PIECES := 3
 const MAX_BOARD_PIECES_LIMIT := 10
 const UPGRADE_BASE_PRICE := 10
 const UPGRADE_PRICE_STEP := 5
+const MAX_GAMBITS := 6
+const GAMBIT_POOL: Array[GambitData] = [
+	preload("res://data/gambits/bug_catchers_gambit.tres"),
+	preload("res://data/gambits/cavalry_bounty.tres"),
+	preload("res://data/gambits/headhunter.tres"),
+	preload("res://data/gambits/piggy_bank.tres"),
+	preload("res://data/gambits/royal_tax.tres"),
+	preload("res://data/gambits/reinforcements.tres"),
+]
 
 var money := STARTING_MONEY:
 	set(value):
@@ -54,6 +64,9 @@ var max_board_pieces := STARTING_MAX_BOARD_PIECES
 var shop_offers: Array[UnitStats] = []
 ## Locked offers are kept when the shop is rerolled or restocked.
 var shop_locks: Array[bool] = []
+## Gambits for sale; null means the slot is empty or was bought.
+var gambit_offers: Array[GambitData] = []
+var gambits: Array[GambitData] = []
 
 
 func _ready() -> void:
@@ -76,6 +89,10 @@ func reset() -> void:
 	shop_offers.resize(SHOP_SIZE)
 	shop_locks.clear()
 	shop_locks.resize(SHOP_SIZE)
+	gambit_offers.clear()
+	gambit_offers.resize(SHOP_SIZE)
+	gambits.clear()
+	gambits_changed.emit()
 
 
 func is_boss_game() -> bool:
@@ -121,11 +138,29 @@ func revive_piece(index: int) -> bool:
 
 # --- Shop ---
 
-## Fills every unlocked slot with a new random piece.
+## Fills every unlocked piece slot and every gambit slot with new random offers.
 func restock_shop() -> void:
 	for i in SHOP_SIZE:
 		if not shop_locks[i]:
 			shop_offers[i] = WeightedRandom.pick(SHOP_POOL, SHOP_WEIGHTS, rng)
+	
+	gambit_offers.fill(null)
+	for i in SHOP_SIZE:
+		gambit_offers[i] = _pick_gambit_offer()
+
+
+## A random gambit the player doesn't own and that isn't offered yet, or null.
+func _pick_gambit_offer() -> GambitData:
+	var candidates := GAMBIT_POOL.filter(func(gambit: GambitData) -> bool:
+		return gambit not in gambits and gambit not in gambit_offers
+	)
+	if candidates.is_empty():
+		return null
+	
+	var weights: Array[int] = []
+	for gambit: GambitData in candidates:
+		weights.append(GambitData.RARITY_WEIGHTS[gambit.rarity])
+	return WeightedRandom.pick(candidates, weights, rng)
 
 
 func reroll_shop() -> bool:
@@ -187,3 +222,41 @@ func sell_piece(index: int) -> bool:
 	money += pieces[index].get_sell_price()
 	pieces.remove_at(index)
 	return true
+
+
+# --- Gambits ---
+
+func can_buy_gambit(index: int) -> bool:
+	var offer := gambit_offers[index]
+	return offer != null and money >= offer.price and gambits.size() < MAX_GAMBITS
+
+
+func buy_gambit(index: int) -> bool:
+	if not can_buy_gambit(index):
+		return false
+	
+	money -= gambit_offers[index].price
+	gambits.append(gambit_offers[index])
+	gambit_offers[index] = null
+	gambits_changed.emit()
+	return true
+
+
+func get_capture_bonus(capturer: UnitStats, captured: UnitStats) -> int:
+	var bonus := 0
+	for gambit in gambits:
+		bonus += gambit.get_capture_bonus(capturer, captured)
+	return bonus
+
+
+func apply_gambits_to_rewards(rewards: BattleRewards, outcome: GameRules.Outcome) -> void:
+	for gambit in gambits:
+		gambit.modify_rewards(rewards, outcome, money)
+
+
+## Pieces the player may place on the board, including gambit bonuses.
+func get_board_slots() -> int:
+	var slots := max_board_pieces
+	for gambit in gambits:
+		slots += gambit.get_board_slot_bonus()
+	return slots

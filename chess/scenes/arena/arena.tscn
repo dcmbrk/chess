@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/prep_panel/prep_panel.tscn" id="17_ppnl"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="18_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/graveyard/graveyard_panel.tscn" id="19_grav"]
+[ext_resource type="Script" uid="uid://eghqcdvyqsn6" path="res://components/unit_seller.gd" id="20_sell"]
+[ext_resource type="Script" uid="uid://cbygrc4du3x7u" path="res://components/unit_tooltip.gd" id="21_info"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -135,6 +137,17 @@ board = NodePath("../Board")
 turn_manager = NodePath("../TurnManager")
 unit_mover = NodePath("../UnitMover")
 metadata/_custom_type_script = "uid://dtqyj7dftdo2c"
+
+[node name="UnitSeller" type="Node" parent="." node_paths=PackedStringArray("preparation", "play_areas")]
+script = ExtResource("20_sell")
+preparation = NodePath("../PreparationPhase")
+play_areas = [NodePath("../Board"), NodePath("../Bench")]
+metadata/_custom_type_script = "uid://eghqcdvyqsn6"
+
+[node name="UnitTooltip" type="Node" parent="." node_paths=PackedStringArray("seller")]
+script = ExtResource("21_info")
+seller = NodePath("../UnitSeller")
+metadata/_custom_type_script = "uid://cbygrc4du3x7u"
 
 [node name="UnitSpawner" type="Node" parent="." unique_id=750164866 node_paths=PackedStringArray("bench", "game_area")]
 script = ExtResource("9_6w4xk")

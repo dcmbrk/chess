@@ -8,6 +8,15 @@ const SPRITE_SIZE := Vector2(8, 8)
 enum Type { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
 enum Team { WHITE, BLACK }
 
+const DESCRIPTIONS := {
+	Type.PAWN: "Moves 1 forward, captures diagonally. Becomes a Queen on the last row.",
+	Type.KNIGHT: "Jumps in an L shape.",
+	Type.BISHOP: "Slides diagonally.",
+	Type.ROOK: "Slides straight.",
+	Type.QUEEN: "Slides in any direction.",
+	Type.KING: "Moves 1 in any direction. Losing it loses the battle.",
+}
+
 @export var type: Type
 @export var team: Team
 @export var skin_coordinates: Vector2i
@@ -36,3 +45,7 @@ func get_sell_price() -> int:
 
 func get_display_name() -> String:
 	return Type.keys()[type].capitalize()
+
+
+func get_description() -> String:
+	return DESCRIPTIONS[type]

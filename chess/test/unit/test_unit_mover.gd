@@ -83,7 +83,7 @@ func test_capture_removes_enemy_unit() -> void:
 	assert_true(moved)
 	assert_eq(grid.units[Vector2i(1, 1)], white_pawn)
 	assert_true(victim.is_queued_for_deletion())
-	assert_signal_emitted_with_parameters(unit_mover, "unit_captured", [victim])
+	assert_signal_emitted_with_parameters(unit_mover, "unit_captured", [victim, white_pawn])
 
 
 func test_move_works_when_unit_was_already_removed_by_drag() -> void:

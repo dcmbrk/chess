@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RewardBonusGambit" format=3]
+
+[ext_resource type="Script" path="res://data/gambits/reward_bonus_gambit.gd" id="1_dwt0l"]
+
+[resource]
+script = ExtResource("1_dwt0l")
+interest_cap_bonus = 3
+display_name = "Piggy Bank"
+description = "Interest limit +$3."
+icon_coordinates = Vector2i(6, 31)

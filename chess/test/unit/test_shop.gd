@@ -198,7 +198,6 @@ func test_screen_restocks_and_shows_offers_and_stock() -> void:
 	var screen := _create_screen()
 	
 	assert_eq(screen.offers.get_child_count(), RunState.SHOP_SIZE)
-	assert_eq(screen.stock.get_child_count(), RunState.pieces.size())
 	for i in RunState.SHOP_SIZE:
 		assert_eq(_offer_button(screen, i).text, "$%d" % RunState.shop_offers[i].price)
 
@@ -220,7 +219,6 @@ func test_clicking_an_offer_buys_it() -> void:
 	
 	assert_eq(RunState.pieces.back(), piece)
 	assert_eq(_offer_button(screen, 0).text, "Sold")
-	assert_eq(screen.stock.get_child_count(), RunState.pieces.size())
 
 
 func test_lock_button_toggles_lock() -> void:
@@ -251,33 +249,29 @@ func test_upgrade_button_upgrades() -> void:
 	
 	assert_eq(RunState.max_board_pieces, 4)
 	assert_eq(screen.upgrade_button.text, "+1 Slot $15")
-	assert_eq(screen.upgrade_button.tooltip_text, "Max pieces on board: 4")
+	screen.upgrade_button.mouse_entered.emit()
+	assert_eq(Tooltip.body.text, "Max pieces on board: 4 -> 5")
+	screen.upgrade_button.mouse_exited.emit()
+	assert_false(Tooltip.is_showing())
 
 
-func test_holding_a_stock_piece_sells_it() -> void:
-	RunState.pieces = [WHITE_PAWN, WHITE_KNIGHT]
+func test_shop_has_no_stock_to_sell() -> void:
 	var screen := _create_screen()
-	var knight_slot: Button = screen.stock.get_child(1)
-	assert_eq(knight_slot.text, "+$3")
 	
-	knight_slot.button_down.emit()
-	screen.hold_timer.timeout.emit()
-	
-	assert_eq(RunState.pieces, [WHITE_PAWN] as Array[UnitStats])
-	assert_eq(RunState.money, 3)
+	assert_false(screen.has_node("%Stock"))
+	assert_false(screen.has_node("%HoldTimer"))
 
 
-func test_releasing_early_does_not_sell() -> void:
-	RunState.pieces = [WHITE_PAWN, WHITE_KNIGHT]
+func test_offer_tooltip_describes_the_piece() -> void:
+	RunState.shop_offers = [WHITE_KNIGHT, WHITE_KNIGHT, WHITE_KNIGHT]
+	RunState.shop_locks = [true, true, true]
 	var screen := _create_screen()
-	var knight_slot: Button = screen.stock.get_child(1)
 	
-	knight_slot.button_down.emit()
-	knight_slot.button_up.emit()
-	screen.hold_timer.timeout.emit()
+	_offer_button(screen, 0).mouse_entered.emit()
 	
-	assert_eq(RunState.pieces.size(), 2)
-	assert_true(screen.hold_timer.is_stopped())
+	assert_eq(Tooltip.title.text, "Knight")
+	assert_eq(Tooltip.body.text, WHITE_KNIGHT.get_description())
+	Tooltip.hide_tooltip()
 
 
 func test_next_button_finishes() -> void:

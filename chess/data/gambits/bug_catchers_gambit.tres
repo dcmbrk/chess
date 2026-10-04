@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CaptureBonusGambit" format=3]
+
+[ext_resource type="Script" path="res://data/gambits/capture_bonus_gambit.gd" id="1_ck6fy"]
+
+[resource]
+script = ExtResource("1_ck6fy")
+display_name = "Bug Catcher's Gambit"
+description = "Capturing with a Pawn grants +$2."
+price = 6
+icon_coordinates = Vector2i(5, 12)

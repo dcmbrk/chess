@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CaptureBonusGambit" format=3]
+
+[ext_resource type="Script" path="res://data/gambits/capture_bonus_gambit.gd" id="1_kui4u"]
+
+[resource]
+script = ExtResource("1_kui4u")
+any_capturer = true
+bonus = 1
+display_name = "Headhunter"
+description = "Every capture grants +$1."
+rarity = 1
+price = 8
+icon_coordinates = Vector2i(8, 31)

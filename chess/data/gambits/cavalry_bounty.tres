@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CaptureBonusGambit" format=3]
+
+[ext_resource type="Script" path="res://data/gambits/capture_bonus_gambit.gd" id="1_lrtuo"]
+
+[resource]
+script = ExtResource("1_lrtuo")
+capturer_type = 1
+display_name = "Cavalry Bounty"
+description = "Capturing with a Knight grants +$2."
+icon_coordinates = Vector2i(5, 14)

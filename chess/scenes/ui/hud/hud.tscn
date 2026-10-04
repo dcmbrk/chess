@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/ui/hud/money_label.gd" id="1_money"]
 [ext_resource type="Script" path="res://scenes/ui/hud/progress_label.gd" id="2_progress"]
+[ext_resource type="Script" path="res://scenes/ui/hud/gambit_bar.gd" id="3_gambits"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_money"]
 content_margin_left = 2.0
@@ -42,3 +43,11 @@ theme_override_font_sizes/font_size = 5
 text = "Stage 1/5  Game 1/5"
 vertical_alignment = 1
 script = ExtResource("2_progress")
+
+[node name="GambitBar" type="VBoxContainer" parent="."]
+offset_left = 144.0
+offset_top = 16.0
+offset_right = 152.0
+offset_bottom = 64.0
+theme_override_constants/separation = 0
+script = ExtResource("3_gambits")

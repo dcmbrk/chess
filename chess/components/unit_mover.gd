@@ -1,7 +1,7 @@
 class_name UnitMover
 extends Node
 
-signal unit_captured(unit: Unit)
+signal unit_captured(unit: Unit, by: Unit)
 
 @export var play_areas: Array[PlayArea]
 @export var board: PlayArea
@@ -59,7 +59,7 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 	var captured := board.unit_grid.units[to] as Unit
 	if captured:
 		board.unit_grid.remove_unit(to)
-		unit_captured.emit(captured)
+		unit_captured.emit(captured, unit)
 		captured.queue_free()
 	
 	_move_unit(unit, board, to)

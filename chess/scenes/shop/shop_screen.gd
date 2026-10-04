@@ -1,4 +1,4 @@
-## Between battles: buy pieces, reroll, upgrade the board and sell from the Stock.
+## Between battles: buy pieces and gambits, reroll and upgrade the board.
 class_name ShopScreen
 extends Control
 
@@ -6,14 +6,11 @@ signal finished
 
 @export_file("*.tscn") var next_scene := "res://scenes/arena/arena.tscn"
 
-var _held_stock_index := -1
-
+@onready var gambit_offers: HBoxContainer = %GambitOffers
 @onready var offers: HBoxContainer = %Offers
-@onready var stock: HBoxContainer = %Stock
 @onready var reroll_button: Button = %RerollButton
 @onready var upgrade_button: Button = %UpgradeButton
 @onready var next_button: Button = %NextButton
-@onready var hold_timer: Timer = %HoldTimer
 
 
 func _ready() -> void:
@@ -21,18 +18,19 @@ func _ready() -> void:
 	reroll_button.pressed.connect(_on_reroll_pressed)
 	upgrade_button.pressed.connect(_on_upgrade_pressed)
 	next_button.pressed.connect(_on_next_pressed)
-	hold_timer.timeout.connect(_on_hold_timer_timeout)
+	upgrade_button.mouse_entered.connect(_on_upgrade_button_mouse_entered)
+	upgrade_button.mouse_exited.connect(Tooltip.hide_tooltip.bind(upgrade_button))
 	_refresh()
 
 
 func _refresh() -> void:
+	_clear(gambit_offers)
+	for i in RunState.SHOP_SIZE:
+		gambit_offers.add_child(_create_gambit_offer(i))
+	
 	_clear(offers)
 	for i in RunState.SHOP_SIZE:
 		offers.add_child(_create_offer(i))
-	
-	_clear(stock)
-	for i in RunState.pieces.size():
-		stock.add_child(_create_stock_slot(i))
 	
 	reroll_button.text = "Reroll $%d" % RunState.REROLL_PRICE
 	reroll_button.disabled = RunState.money < RunState.REROLL_PRICE
@@ -41,7 +39,6 @@ func _refresh() -> void:
 		upgrade_button.text = "Slots maxed"
 	else:
 		upgrade_button.text = "+1 Slot $%d" % RunState.get_upgrade_price()
-	upgrade_button.tooltip_text = "Max pieces on board: %d" % RunState.max_board_pieces
 	upgrade_button.disabled = not RunState.can_upgrade()
 
 
@@ -78,17 +75,25 @@ func _create_offer(index: int) -> VBoxContainer:
 	return box
 
 
-func _create_stock_slot(index: int) -> Button:
-	var piece := RunState.pieces[index]
-	var slot := UiStyle.create_piece_button(piece, "+$%d" % piece.get_sell_price())
-	slot.disabled = not RunState.can_sell(index)
-	slot.button_down.connect(_on_stock_slot_down.bind(index))
-	slot.button_up.connect(_on_stock_slot_up)
-	return slot
+func _create_gambit_offer(index: int) -> Button:
+	var gambit := RunState.gambit_offers[index]
+	var button := UiStyle.create_piece_button(null, "$%d" % gambit.price if gambit else "Sold")
+	button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	if gambit:
+		button.icon = gambit.create_icon()
+		Tooltip.attach_gambit(button, gambit)
+	button.disabled = not RunState.can_buy_gambit(index)
+	button.pressed.connect(_on_gambit_offer_pressed.bind(index))
+	return button
 
 
 func _on_offer_pressed(index: int) -> void:
 	RunState.buy_offer(index)
+	_refresh()
+
+
+func _on_gambit_offer_pressed(index: int) -> void:
+	RunState.buy_gambit(index)
 	_refresh()
 
 
@@ -107,23 +112,12 @@ func _on_upgrade_pressed() -> void:
 	_refresh()
 
 
-func _on_stock_slot_down(index: int) -> void:
-	_held_stock_index = index
-	hold_timer.start()
-
-
-func _on_stock_slot_up() -> void:
-	_held_stock_index = -1
-	hold_timer.stop()
-
-
-func _on_hold_timer_timeout() -> void:
-	if _held_stock_index == -1:
-		return
-	
-	RunState.sell_piece(_held_stock_index)
-	_held_stock_index = -1
-	_refresh()
+func _on_upgrade_button_mouse_entered() -> void:
+	var slots := RunState.max_board_pieces
+	var body := "Max pieces on board: %d -> %d" % [slots, slots + 1]
+	if slots >= RunState.MAX_BOARD_PIECES_LIMIT:
+		body = "Max pieces on board: %d (limit)" % slots
+	Tooltip.show_tooltip(upgrade_button, upgrade_button.get_global_rect(), "+1 Slot", "", body)
 
 
 func _on_next_pressed() -> void:

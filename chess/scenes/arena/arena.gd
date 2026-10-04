@@ -20,6 +20,8 @@ const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
 @onready var prep_panel: PrepPanel = $PrepPanel
 @onready var enemy_zone_overlay: EnemyZoneOverlay = $Board/EnemyZoneOverlay
 @onready var graveyard_panel: GraveyardPanel = $GraveyardPanel
+@onready var unit_seller: UnitSeller = $UnitSeller
+@onready var unit_tooltip: UnitTooltip = $UnitTooltip
 
 var captured_enemies := 0
 var outcome: GameRules.Outcome
@@ -27,6 +29,8 @@ var outcome: GameRules.Outcome
 func _ready() -> void:
 	unit_spawner.unit_spawned.connect(unit_mover.setup_unit)
 	unit_spawner.unit_spawned.connect(move_highlighter.setup_unit)
+	unit_spawner.unit_spawned.connect(unit_seller.setup_unit)
+	unit_spawner.unit_spawned.connect(unit_tooltip.setup_unit)
 	unit_mover.unit_captured.connect(_on_unit_captured)
 	turn_manager.battle_ended.connect(_on_battle_ended)
 	battle_result.closed.connect(_on_battle_result_closed)
@@ -43,7 +47,7 @@ func _ready() -> void:
 	for piece in RunState.pieces:
 		unit_spawner.spawn_unit(piece)
 	
-	preparation.max_pieces = RunState.max_board_pieces
+	preparation.max_pieces = RunState.get_board_slots()
 	preparation.start()
 
 
@@ -52,16 +56,18 @@ func _on_battle_started() -> void:
 	enemy_zone_overlay.hide()
 
 
-func _on_unit_captured(unit: Unit) -> void:
+func _on_unit_captured(unit: Unit, by: Unit) -> void:
 	if unit.stats.team == preparation.player_team:
 		RunState.lose_piece(unit.get_run_stats())
 	else:
 		captured_enemies += 1
+		RunState.add_money(RunState.get_capture_bonus(by.stats, unit.stats))
 
 
 func _on_battle_ended(result: GameRules.Result) -> void:
 	outcome = GameRules.get_outcome(result, preparation.player_team)
 	var rewards := BattleRewards.calculate(outcome, captured_enemies, RunState.money)
+	RunState.apply_gambits_to_rewards(rewards, outcome)
 	battle_result.show_result(outcome, rewards, captured_enemies)
 
 
