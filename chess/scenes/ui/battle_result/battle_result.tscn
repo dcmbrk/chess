@@ -62,12 +62,63 @@ theme_override_font_sizes/font_size = 6
 text = "You win!"
 horizontal_alignment = 1
 
-[node name="PlayAgainButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="RewardsGrid" type="GridContainer" parent="CenterContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = -1
+columns = 3
+
+[node name="WinLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 5
+text = "Win"
+horizontal_alignment = 1
+
+[node name="CapturesLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 5
+text = "Captured x0"
+horizontal_alignment = 1
+
+[node name="InterestLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 5
+text = "Interest"
+horizontal_alignment = 1
+
+[node name="WinAmount" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.8, 0.38, 1)
+theme_override_font_sizes/font_size = 5
+text = "$2"
+horizontal_alignment = 1
+
+[node name="CapturesAmount" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.8, 0.38, 1)
+theme_override_font_sizes/font_size = 5
+text = "$0"
+horizontal_alignment = 1
+
+[node name="InterestAmount" type="Label" parent="CenterContainer/Panel/VBoxContainer/RewardsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.8, 0.38, 1)
+theme_override_font_sizes/font_size = 5
+text = "$0"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 5
 theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
 theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
-text = "Play again"
+text = "Get my $0!!"

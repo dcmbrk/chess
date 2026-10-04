@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://cfcu5bfl7xbkc" path="res://components/preparation_phase.gd" id="15_prep"]
 [ext_resource type="Script" uid="uid://c08luuwjdbua8" path="res://components/enemy_zone_overlay.gd" id="16_zone"]
 [ext_resource type="PackedScene" path="res://scenes/ui/prep_panel/prep_panel.tscn" id="17_ppnl"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="18_hud"]
 
 [node name="Arena" type="Node2D" unique_id=392534286]
 script = ExtResource("1_8trdl")
@@ -164,3 +165,5 @@ metadata/_custom_type_script = "uid://c3kvvpgst77kx"
 [node name="BattleResult" parent="." instance=ExtResource("14_rslt")]
 
 [node name="PrepPanel" parent="." instance=ExtResource("17_ppnl")]
+
+[node name="Hud" parent="." instance=ExtResource("18_hud")]

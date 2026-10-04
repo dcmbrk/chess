@@ -5,6 +5,18 @@ class_name GameRules
 extends RefCounted
 
 enum Result { ONGOING, WHITE_WINS, BLACK_WINS, DRAW }
+## A finished battle's result from one team's point of view.
+enum Outcome { WIN, LOSS, DRAW }
+
+
+static func get_outcome(result: Result, team: UnitStats.Team) -> Outcome:
+	assert(result != Result.ONGOING, "The battle is not over yet!")
+
+	if result == Result.DRAW:
+		return Outcome.DRAW
+
+	var winner := UnitStats.Team.WHITE if result == Result.WHITE_WINS else UnitStats.Team.BLACK
+	return Outcome.WIN if winner == team else Outcome.LOSS
 
 
 static func count_pieces(board: BoardState, team: UnitStats.Team) -> int:

@@ -68,3 +68,11 @@ func test_losing_king_loses_only_when_king_is_needed() -> void:
 	assert_eq(GameRules.get_result(board, {Team.WHITE: false, Team.BLACK: true}), Result.WHITE_WINS)
 	assert_eq(GameRules.get_result(board, {Team.WHITE: true, Team.BLACK: false}), Result.BLACK_WINS)
 	assert_eq(GameRules.get_result(board, {}), Result.ONGOING, "missing entries mean no king needed")
+
+
+func test_get_outcome() -> void:
+	assert_eq(GameRules.get_outcome(Result.WHITE_WINS, Team.WHITE), GameRules.Outcome.WIN)
+	assert_eq(GameRules.get_outcome(Result.WHITE_WINS, Team.BLACK), GameRules.Outcome.LOSS)
+	assert_eq(GameRules.get_outcome(Result.BLACK_WINS, Team.BLACK), GameRules.Outcome.WIN)
+	assert_eq(GameRules.get_outcome(Result.BLACK_WINS, Team.WHITE), GameRules.Outcome.LOSS)
+	assert_eq(GameRules.get_outcome(Result.DRAW, Team.WHITE), GameRules.Outcome.DRAW)
