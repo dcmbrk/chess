@@ -69,6 +69,10 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		board.unit_grid.remove_unit(to)
 		unit_captured.emit(captured, unit)
 		captured.queue_free()
+		Sfx.play("capture")
+		ScreenEffects.shake()
+	else:
+		Sfx.play("move")
 	
 	_move_unit(unit, board, to)
 	var promotion := MoveRules.get_promotion(board_state, unit.stats, to)
@@ -80,6 +84,7 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		return true
 	if promotion:
 		unit.promote(promotion)
+		Sfx.play("promote")
 	
 	turn_manager.end_turn(get_rules_board())
 	return true
@@ -95,6 +100,7 @@ func finish_promotion(choice: UnitStats) -> void:
 	
 	_pending_promotion.promote(choice)
 	_pending_promotion = null
+	Sfx.play("promote")
 	turn_manager.end_turn(get_rules_board())
 
 
@@ -117,6 +123,7 @@ func perform_deploy(unit: Unit, to: Vector2i) -> bool:
 				play_area.unit_grid.remove_unit(tile)
 	
 	_move_unit(unit, board, to)
+	Sfx.play("move")
 	turn_manager.end_turn(get_rules_board())
 	return true
 
@@ -222,9 +229,11 @@ func _reset_unit_to_starting_position(starting_position: Vector2, unit: Unit) ->
 
 
 func _move_unit(unit: Unit, play_area: PlayArea, tile: Vector2i) -> void:
+	var from := unit.global_position
 	play_area.unit_grid.add_unit(tile, unit)
 	unit.global_position = play_area.get_global_from_tile(tile)
 	unit.reparent(play_area.unit_grid)
+	unit.slide_from(from)
 
 
 func _on_unit_drag_started(unit: Unit) -> void:
@@ -283,3 +292,4 @@ func _on_unit_dropped(starting_position: Vector2, unit: Unit) -> void:
 		_move_unit(old_unit, old_area, old_tile)
 	
 	_move_unit(unit, new_area, new_tile)
+	Sfx.play("move")

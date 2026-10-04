@@ -22,6 +22,8 @@ Progress="*res://autoloads/progress.gd"
 RunState="*res://autoloads/run_state.gd"
 Tooltip="*res://scenes/ui/tooltip/tooltip_panel.tscn"
 PauseMenu="*res://scenes/ui/pause/pause_menu.tscn"
+Sfx="*res://autoloads/sfx.gd"
+ScreenEffects="*res://scenes/ui/screen_effects/screen_effects.tscn"
 
 [display]
 

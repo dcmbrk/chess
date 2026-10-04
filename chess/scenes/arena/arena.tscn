@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://cbygrc4du3x7u" path="res://components/unit_tooltip.gd" id="21_info"]
 [ext_resource type="Script" uid="uid://cvv5r1btrdipp" path="res://components/cursed_tiles_overlay.gd" id="22_curs"]
 [ext_resource type="PackedScene" path="res://scenes/ui/promotion/promotion_panel.tscn" id="23_prom"]
+[ext_resource type="PackedScene" path="res://scenes/ui/victory/victory_panel.tscn" id="24_vict"]
 
 [node name="Arena" type="Node2D" unique_id=392534286 groups=["run_scenes"]]
 script = ExtResource("1_8trdl")
@@ -173,3 +174,5 @@ metadata/_custom_type_script = "uid://c3kvvpgst77kx"
 [node name="GraveyardPanel" parent="." unique_id=1267382530 instance=ExtResource("19_grav")]
 
 [node name="PromotionPanel" parent="." instance=ExtResource("23_prom")]
+
+[node name="VictoryPanel" parent="." instance=ExtResource("24_vict")]

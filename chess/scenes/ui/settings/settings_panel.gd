@@ -10,6 +10,8 @@ signal closed
 @onready var fullscreen_button: Button = %FullscreenButton
 @onready var move_hints_button: Button = %MoveHintsButton
 @onready var fast_enemy_button: Button = %FastEnemyButton
+@onready var animations_button: Button = %AnimationsButton
+@onready var crt_button: Button = %CrtButton
 @onready var close_button: Button = %CloseButton
 
 
@@ -21,6 +23,8 @@ func _ready() -> void:
 	fullscreen_button.pressed.connect(func() -> void: Settings.set_fullscreen(not Settings.fullscreen))
 	move_hints_button.pressed.connect(func() -> void: Settings.set_move_hints(not Settings.move_hints))
 	fast_enemy_button.pressed.connect(func() -> void: Settings.set_fast_enemy(not Settings.fast_enemy))
+	animations_button.pressed.connect(func() -> void: Settings.set_animations(not Settings.animations))
+	crt_button.pressed.connect(func() -> void: Settings.set_crt(not Settings.crt))
 	close_button.pressed.connect(close)
 	Settings.changed.connect(_refresh)
 
@@ -42,6 +46,8 @@ func _refresh() -> void:
 	fullscreen_button.text = _on_off(Settings.fullscreen)
 	move_hints_button.text = _on_off(Settings.move_hints)
 	fast_enemy_button.text = _on_off(Settings.fast_enemy)
+	animations_button.text = _on_off(Settings.animations)
+	crt_button.text = _on_off(Settings.crt)
 
 
 static func _on_off(value: bool) -> String:

@@ -83,7 +83,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 1
-columns = 2
+columns = 4
 
 [node name="VolumeName" type="Label" parent="Panel/CenterContainer/PanelContainer/VBoxContainer/Grid"]
 layout_mode = 2
@@ -210,6 +210,54 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
 theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
 text = "Off"
+
+[node name="AnimationsName" type="Label" parent="Panel/CenterContainer/PanelContainer/VBoxContainer/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_font_sizes/font_size = 5
+text = "Animations"
+vertical_alignment = 1
+
+[node name="AnimationsButton" type="Button" parent="Panel/CenterContainer/PanelContainer/VBoxContainer/Grid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_hover_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_pressed_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_focus_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 5
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
+text = "On"
+
+[node name="CrtName" type="Label" parent="Panel/CenterContainer/PanelContainer/VBoxContainer/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.55, 0.27, 0.3, 1)
+theme_override_font_sizes/font_size = 5
+text = "CRT effect"
+vertical_alignment = 1
+
+[node name="CrtButton" type="Button" parent="Panel/CenterContainer/PanelContainer/VBoxContainer/Grid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_hover_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_pressed_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_colors/font_focus_color = Color(0.93, 0.89, 0.78, 1)
+theme_override_font_sizes/font_size = 5
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button")
+theme_override_styles/focus = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_button_disabled")
+text = "On"
 
 [node name="CloseButton" type="Button" parent="Panel/CenterContainer/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true

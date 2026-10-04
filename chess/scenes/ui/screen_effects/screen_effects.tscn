@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/screen_effects/screen_effects.gd" id="1_effects"]
+[ext_resource type="Shader" path="res://assets/shaders/crt.gdshader" id="2_crt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
+shader = ExtResource("2_crt")
+
+[node name="ScreenEffects" type="CanvasLayer"]
+layer = 127
+script = ExtResource("1_effects")
+
+[node name="Crt" type="ColorRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_crt")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

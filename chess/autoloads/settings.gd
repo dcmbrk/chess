@@ -16,6 +16,8 @@ var volume := 80
 var fullscreen := false
 var move_hints := true
 var fast_enemy := false
+var animations := true
+var crt := true
 
 
 func _ready() -> void:
@@ -43,6 +45,16 @@ func set_fast_enemy(value: bool) -> void:
 	_on_changed()
 
 
+func set_animations(value: bool) -> void:
+	animations = value
+	_on_changed()
+
+
+func set_crt(value: bool) -> void:
+	crt = value
+	_on_changed()
+
+
 func get_enemy_delay(base_delay: float) -> float:
 	return base_delay * FAST_ENEMY_FACTOR if fast_enemy else base_delay
 
@@ -52,6 +64,8 @@ func reset_to_defaults() -> void:
 	fullscreen = false
 	move_hints = true
 	fast_enemy = false
+	animations = true
+	crt = true
 	_on_changed()
 
 
@@ -74,6 +88,8 @@ func load_settings() -> void:
 	fullscreen = config.get_value("video", "fullscreen", fullscreen)
 	move_hints = config.get_value("gameplay", "move_hints", move_hints)
 	fast_enemy = config.get_value("gameplay", "fast_enemy", fast_enemy)
+	animations = config.get_value("video", "animations", animations)
+	crt = config.get_value("video", "crt", crt)
 
 
 func save_settings() -> void:
@@ -82,6 +98,8 @@ func save_settings() -> void:
 	config.set_value("video", "fullscreen", fullscreen)
 	config.set_value("gameplay", "move_hints", move_hints)
 	config.set_value("gameplay", "fast_enemy", fast_enemy)
+	config.set_value("video", "animations", animations)
+	config.set_value("video", "crt", crt)
 	config.save(path)
 
 

@@ -78,6 +78,7 @@ func sell(unit: Unit) -> bool:
 	
 	RunState.sell_piece(RunState.pieces.find(piece))
 	unit_sold.emit(unit, piece.get_sell_price())
+	Sfx.play("sell")
 	unit.queue_free()
 	return true
 

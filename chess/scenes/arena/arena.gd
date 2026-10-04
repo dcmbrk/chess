@@ -6,6 +6,7 @@ const HALF_CELL_SIZE := Vector2(4, 4)
 const QUARTER_CELL_SIZE := Vector2(2, 2)
 const PIECE_WHEELS_SCENE := "res://scenes/piece_wheels/piece_wheels.tscn"
 const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
+const MAIN_MENU_SCENE := "res://scenes/main-menu/main_menu.tscn"
 
 ## The enemies of this battle. Picked from RunState when left empty.
 @export var encounter: EncounterData
@@ -24,6 +25,7 @@ const SHOP_SCENE := "res://scenes/shop/shop_screen.tscn"
 @onready var cursed_tiles_overlay: CursedTilesOverlay = $Board/CursedTilesOverlay
 @onready var boss_label: BossLabel = $Hud/BossLabel
 @onready var promotion_panel: PromotionPanel = $PromotionPanel
+@onready var victory_panel: VictoryPanel = $VictoryPanel
 @onready var graveyard_panel: GraveyardPanel = $GraveyardPanel
 @onready var unit_seller: UnitSeller = $UnitSeller
 @onready var unit_tooltip: UnitTooltip = $UnitTooltip
@@ -39,6 +41,7 @@ func _ready() -> void:
 	unit_mover.unit_captured.connect(_on_unit_captured)
 	unit_mover.promotion_requested.connect(promotion_panel.open)
 	promotion_panel.chosen.connect(unit_mover.finish_promotion)
+	victory_panel.closed.connect(_on_victory_closed)
 	turn_manager.battle_ended.connect(_on_battle_ended)
 	battle_result.closed.connect(_on_battle_result_closed)
 	preparation.pieces_changed.connect(prep_panel.update_pieces)
@@ -83,6 +86,7 @@ func _on_unit_captured(unit: Unit, by: Unit) -> void:
 
 func _on_battle_ended(result: GameRules.Result) -> void:
 	outcome = GameRules.get_outcome(result, preparation.player_team)
+	Sfx.play("lose" if outcome == GameRules.Outcome.LOSS else "win")
 	var rewards := BattleRewards.calculate(outcome, captured_enemies, RunState.money)
 	RunState.apply_gambits_to_rewards(rewards, outcome)
 	battle_result.show_result(outcome, rewards, captured_enemies)
@@ -96,9 +100,8 @@ func _on_battle_result_closed() -> void:
 	
 	if RunState.advance():
 		Progress.record_run_won()
-		# TODO: show a victory screen.
-		RunState.reset()
-		get_tree().change_scene_to_file("res://scenes/main-menu/main_menu.tscn")
+		Sfx.play("win")
+		victory_panel.open()
 		return
 	
 	Progress.record_stage(RunState.stage)
@@ -111,3 +114,8 @@ func _on_battle_result_closed() -> void:
 
 func _go_to_shop() -> void:
 	get_tree().change_scene_to_file(SHOP_SCENE)
+
+
+func _on_victory_closed() -> void:
+	RunState.reset()
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)

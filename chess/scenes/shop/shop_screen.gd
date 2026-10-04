@@ -88,12 +88,14 @@ func _create_gambit_offer(index: int) -> Button:
 
 
 func _on_offer_pressed(index: int) -> void:
-	RunState.buy_offer(index)
+	if RunState.buy_offer(index):
+		Sfx.play("buy")
 	_refresh()
 
 
 func _on_gambit_offer_pressed(index: int) -> void:
-	RunState.buy_gambit(index)
+	if RunState.buy_gambit(index):
+		Sfx.play("buy")
 	_refresh()
 
 
@@ -108,7 +110,8 @@ func _on_reroll_pressed() -> void:
 
 
 func _on_upgrade_pressed() -> void:
-	RunState.upgrade_max_board_pieces()
+	if RunState.upgrade_max_board_pieces():
+		Sfx.play("buy")
 	_refresh()
 
 

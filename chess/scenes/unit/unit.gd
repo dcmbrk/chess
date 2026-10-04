@@ -6,6 +6,9 @@ extends Area2D
 ## The stats before a promotion; promotions only last for one battle.
 var promoted_from: UnitStats
 
+const SLIDE_TIME := 0.12
+
+@onready var visuals: CanvasGroup = $Visuals
 @onready var skin: Sprite2D = $Visuals/Skin
 @onready var drag_and_drop: DragAndDrop = $DragAndDrop
 @onready var velocity_based_rotation: VelocityBasedRotation = $VelocityBasedRotation
@@ -39,6 +42,17 @@ func promote(new_stats: UnitStats) -> void:
 ## The piece as it is stored in the run (ignores promotions).
 func get_run_stats() -> UnitStats:
 	return promoted_from if promoted_from else stats
+
+
+## Moves the unit at once, but lets its sprite slide over from [param from_global].
+func slide_from(from_global: Vector2) -> void:
+	if not Settings.animations or not is_inside_tree():
+		return
+	
+	visuals.position = from_global - global_position
+	var tween := create_tween()
+	tween.tween_property(visuals, "position", Vector2.ZERO, SLIDE_TIME) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 
 func reset_after_dragging(starting_position: Vector2) -> void:
