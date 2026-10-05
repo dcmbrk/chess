@@ -10,9 +10,10 @@ var units: Dictionary
 var forbidden_tiles: Dictionary[Vector2i, int] = {}
 ## STASIS: units on these tiles can't move and can't be captured.
 var frozen_tiles: Dictionary[Vector2i, bool] = {}
-## Special tiles placed by the player, and the player's team (their owner).
+## Special tiles placed by the player. Their effects live in TileEffects.
 var special_tiles: Dictionary[Vector2i, SpecialTileData] = {}
-var special_tiles_owner := UnitStats.Team.WHITE
+## Crumbled tiles: nobody can enter them.
+var holes: Dictionary[Vector2i, bool] = {}
 
 
 func _ready() -> void:
@@ -67,12 +68,15 @@ func to_board_state() -> BoardState:
 	var board := BoardState.new(size)
 	board.forbidden_tiles = forbidden_tiles.duplicate()
 	board.frozen_tiles = frozen_tiles.duplicate()
-	for tile in special_tiles:
-		special_tiles[tile].apply_to(board, tile, special_tiles_owner)
+	board.holes = holes.duplicate()
 
 	for tile: Vector2i in units:
 		var unit := units[tile] as Unit
 		if unit and unit.stats:
 			board.set_piece(tile, unit.stats)
+			if unit.is_protected:
+				board.protected_tiles[tile] = unit.stats.team
+			if unit.is_trapped:
+				board.frozen_tiles[tile] = true
 
 	return board

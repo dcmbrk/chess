@@ -6,6 +6,32 @@ extends Area2D
 ## The stats before a promotion; promotions only last for one battle.
 var promoted_from: UnitStats
 
+## Battle statuses from special tiles. Each one tints the unit.
+var is_protected := false:
+	set(value):
+		is_protected = value
+		_update_status_tint()
+var is_blessed := false:
+	set(value):
+		is_blessed = value
+		_update_status_tint()
+var is_trapped := false:
+	set(value):
+		is_trapped = value
+		_update_status_tint()
+## The trapped unit already skipped its turn.
+var trap_served := false
+## A phantom copy: only lives for this battle, sells for nothing.
+var is_temporary := false:
+	set(value):
+		is_temporary = value
+		_update_status_tint()
+
+const PROTECTED_TINT := Color(0.7, 0.85, 1.0)
+const BLESSED_TINT := Color(1.0, 0.95, 0.6)
+const TRAPPED_TINT := Color(0.6, 0.9, 0.6)
+const TEMPORARY_TINT := Color(0.8, 0.85, 1.0, 0.6)
+
 const SLIDE_TIME := 0.12
 
 @onready var visuals: CanvasGroup = $Visuals
@@ -82,3 +108,18 @@ func _on_mouse_exited() -> void:
 	
 	outline_highlighter.clear_highlight()
 	z_index = 0
+
+
+func _update_status_tint() -> void:
+	if not is_node_ready():
+		return
+	var tint := Color.WHITE
+	if is_temporary:
+		tint *= TEMPORARY_TINT
+	if is_blessed:
+		tint *= BLESSED_TINT
+	if is_protected:
+		tint *= PROTECTED_TINT
+	if is_trapped:
+		tint *= TRAPPED_TINT
+	skin.self_modulate = tint

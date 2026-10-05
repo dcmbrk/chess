@@ -6,6 +6,6 @@
 [resource]
 script = ExtResource("1_tile")
 display_name = "Protection"
-description = "Your piece standing here can't be captured."
+description = "Your piece moving here can't be captured during the enemy's next turn."
 price = 5
 texture = ExtResource("2_tex")

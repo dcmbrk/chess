@@ -46,6 +46,7 @@ func _input(event: InputEvent) -> void:
 
 func can_sell(unit: Unit) -> bool:
 	return preparation.active \
+			and not unit.is_temporary \
 			and unit.stats.team == preparation.player_team \
 			and RunState.can_sell(RunState.pieces.find(unit.get_run_stats()))
 

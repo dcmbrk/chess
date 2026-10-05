@@ -2,18 +2,18 @@
 class_name SpecialTileData
 extends Resource
 
+## Like the original game, effects trigger when a piece moves onto the tile.
+## TileEffects applies them.
 enum Effect {
-	## The player's piece standing on it can't be captured.
+	## Protective: your piece can't be captured during the enemy's next turn.
 	PROTECTION,
-	## The player's piece ending a move on it earns money.
+	## Blessed: your piece is blessed; if it gets captured, it returns to the Stock.
 	BENEDICTION,
-	## An enemy piece moving onto it is destroyed.
+	## Trap: an enemy piece is trapped and skips its next turn.
 	HUNTER,
-	## Enemy pieces can't enter or slide through it.
+	## Phantom: your piece leaves a phantom copy in the Stock for this battle.
 	PHANTOM,
 }
-
-const BENEDICTION_MONEY := 1
 
 @export var display_name := ""
 @export_multiline var description := ""
@@ -21,13 +21,3 @@ const BENEDICTION_MONEY := 1
 @export var price := 4
 @export var texture: Texture2D
 
-
-## Adds this tile's rule to a board snapshot. [param owner] is the player's team.
-func apply_to(board: BoardState, tile: Vector2i, owner: UnitStats.Team) -> void:
-	match effect:
-		Effect.PROTECTION:
-			board.protected_tiles[tile] = owner
-		Effect.HUNTER:
-			board.trap_tiles[tile] = UnitStats.get_opponent(owner)
-		Effect.PHANTOM:
-			board.forbidden_tiles[tile] = UnitStats.get_opponent(owner)

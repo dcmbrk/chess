@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_tile")
 display_name = "Hunter"
-description = "An enemy piece moving here is destroyed."
+description = "An enemy moving here is trapped and skips its next turn."
 effect = 2
 price = 6
 texture = ExtResource("2_tex")

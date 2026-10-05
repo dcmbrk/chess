@@ -1,8 +1,12 @@
 class_name UnitMover
 extends Node
 
-## [param by] is null when a Hunter tile destroyed the unit.
+## [param by] is null when the unit was destroyed without a capturer (a crumbling tile).
 signal unit_captured(unit: Unit, by: Unit)
+## A unit ended a move (or was put from the Stock) on [param tile]. Tile effects react to it.
+signal unit_landed(unit: Unit, tile: Vector2i)
+## Emitted right before the turn passes; the board may still change (crumbling tiles).
+signal turn_ending
 ## The player's pawn reached the last row; call [method finish_promotion] with one of [param options].
 signal promotion_requested(unit: Unit, options: Array[Resource])
 
@@ -79,11 +83,7 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		Sfx.play("move")
 	
 	_move_unit(unit, board, to)
-	if board_state.is_trap_for(to, unit.stats.team):
-		_destroy_on_trap(unit, to)
-		turn_manager.end_turn(get_rules_board())
-		return true
-	_apply_landing_tile(unit, to)
+	unit_landed.emit(unit, to)
 	
 	var promotion := MoveRules.get_promotion(board_state, unit.stats, to)
 	if promotion and _should_ask_promotion(unit):
@@ -96,7 +96,7 @@ func perform_board_move(unit: Unit, from: Vector2i, to: Vector2i) -> bool:
 		unit.promote(promotion)
 		Sfx.play("promote")
 	
-	turn_manager.end_turn(get_rules_board())
+	end_turn()
 	return true
 
 
@@ -111,24 +111,22 @@ func finish_promotion(choice: UnitStats) -> void:
 	_pending_promotion.promote(choice)
 	_pending_promotion = null
 	Sfx.play("promote")
+	end_turn()
+
+
+## Passes the turn to the other team.
+func end_turn() -> void:
+	turn_ending.emit()
 	turn_manager.end_turn(get_rules_board())
 
 
-## Hunter tile: the unit is destroyed (it counts as captured, by nobody).
-func _destroy_on_trap(unit: Unit, tile: Vector2i) -> void:
+## Removes a board unit without a capturer (it counts as captured, by nobody).
+func destroy_unit(unit: Unit, tile: Vector2i) -> void:
 	board.unit_grid.remove_unit(tile)
 	unit_captured.emit(unit, null)
 	unit.queue_free()
 	Sfx.play("capture")
 	ScreenEffects.shake()
-
-
-## Benediction tile: the player's unit ending its move there earns money.
-func _apply_landing_tile(unit: Unit, tile: Vector2i) -> void:
-	var special := board.unit_grid.special_tiles.get(tile) as SpecialTileData
-	if special and special.effect == SpecialTileData.Effect.BENEDICTION and unit.stats.team == player_team:
-		RunState.add_money(SpecialTileData.BENEDICTION_MONEY)
-		Sfx.play("buy")
 
 
 func _should_ask_promotion(unit: Unit) -> bool:
@@ -151,8 +149,8 @@ func perform_deploy(unit: Unit, to: Vector2i) -> bool:
 	
 	_move_unit(unit, board, to)
 	Sfx.play("move")
-	_apply_landing_tile(unit, to)
-	turn_manager.end_turn(get_rules_board())
+	unit_landed.emit(unit, to)
+	end_turn()
 	return true
 
 

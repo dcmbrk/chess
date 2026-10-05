@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_tile")
 display_name = "Benediction"
-description = "Your piece ending a move here earns +$1."
+description = "Your piece moving here is blessed: if captured, it returns to your Stock."
 effect = 1
 price = 4
 texture = ExtResource("2_tex")

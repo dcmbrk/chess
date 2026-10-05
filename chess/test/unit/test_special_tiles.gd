@@ -22,13 +22,6 @@ func after_all() -> void:
 	RunState.reset()
 
 
-func _board(pieces: Dictionary, tiles: Dictionary) -> BoardState:
-	var board := PieceFactory.board_with(pieces)
-	for tile: Vector2i in tiles:
-		(tiles[tile] as SpecialTileData).apply_to(board, tile, Team.WHITE)
-	return board
-
-
 # --- Data ---
 
 func test_every_tile_is_complete() -> void:
@@ -42,70 +35,46 @@ func test_every_tile_is_complete() -> void:
 	assert_eq(effects.size(), SpecialTileData.Effect.size(), "one tile per effect")
 
 
-# --- Rules ---
+# --- Statuses on the board model ---
 
-func test_protection_saves_the_player_piece() -> void:
-	var board := _board({
+func test_protected_unit_cannot_be_captured() -> void:
+	var board := PieceFactory.board_with({
 		Vector2i(2, 3): PieceFactory.make(Type.PAWN, Team.WHITE),
 		Vector2i(2, 0): PieceFactory.make(Type.ROOK, Team.BLACK),
-	}, {Vector2i(2, 3): PROTECTION})
+	})
+	board.protected_tiles[Vector2i(2, 3)] = Team.WHITE
 	
 	assert_does_not_have(MoveRules.get_legal_moves(board, Vector2i(2, 0)), Vector2i(2, 3))
 
 
-func test_protection_does_not_save_an_enemy_standing_on_it() -> void:
-	var board := _board({
-		Vector2i(2, 3): PieceFactory.make(Type.PAWN, Team.BLACK),
-		Vector2i(2, 4): PieceFactory.make(Type.ROOK, Team.WHITE),
-	}, {Vector2i(2, 3): PROTECTION})
+func test_holes_block_everybody() -> void:
+	var board := PieceFactory.board_with({
+		Vector2i(0, 0): PieceFactory.make(Type.ROOK, Team.BLACK),
+		Vector2i(4, 4): PieceFactory.make(Type.ROOK, Team.WHITE),
+	})
+	board.holes[Vector2i(0, 2)] = true
+	board.holes[Vector2i(4, 2)] = true
 	
-	assert_has(MoveRules.get_legal_moves(board, Vector2i(2, 4)), Vector2i(2, 3))
+	var black := MoveRules.get_legal_moves(board, Vector2i(0, 0))
+	assert_does_not_have(black, Vector2i(0, 2))
+	assert_does_not_have(black, Vector2i(0, 3), "can't slide over a hole")
+	assert_does_not_have(MoveRules.get_legal_moves(board, Vector2i(4, 4)), Vector2i(4, 2))
 
 
-func test_phantom_is_a_wall_for_the_enemy_only() -> void:
-	var board := _board({
-		Vector2i(2, 0): PieceFactory.make(Type.ROOK, Team.BLACK),
-		Vector2i(0, 3): PieceFactory.make(Type.ROOK, Team.WHITE),
-	}, {Vector2i(2, 3): PHANTOM})
+func test_grid_turns_unit_statuses_into_rules() -> void:
+	var arena := ArenaHelper.create_arena(self)
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(2, 4))
+	var black: Unit = arena.board.unit_grid.units[Vector2i(1, 1)]
+	pawn.is_protected = true
+	black.is_trapped = true
 	
-	var black_moves := MoveRules.get_legal_moves(board, Vector2i(2, 0))
-	assert_does_not_have(black_moves, Vector2i(2, 3))
-	assert_does_not_have(black_moves, Vector2i(2, 4), "can't slide through")
-	assert_has(MoveRules.get_legal_moves(board, Vector2i(0, 3)), Vector2i(2, 3), "white walks on it")
-
-
-func test_hunter_destroys_an_enemy_moving_onto_it() -> void:
-	var board := _board({Vector2i(2, 2): PieceFactory.make(Type.PAWN, Team.BLACK)}, {Vector2i(2, 3): HUNTER})
+	var board := arena.board.unit_grid.to_board_state()
 	
-	board.move_piece(Vector2i(2, 2), Vector2i(2, 3))
-	
-	assert_true(board.is_empty(Vector2i(2, 3)))
+	assert_true(board.is_protected(Vector2i(2, 4)))
+	assert_true(board.is_frozen(Vector2i(1, 1)))
 
 
-func test_hunter_spares_the_player_pieces() -> void:
-	var rook := PieceFactory.make(Type.ROOK, Team.WHITE)
-	var board := _board({Vector2i(2, 4): rook}, {Vector2i(2, 3): HUNTER})
-	
-	board.move_piece(Vector2i(2, 4), Vector2i(2, 3))
-	
-	assert_eq(board.get_piece(Vector2i(2, 3)), rook)
-
-
-func test_ai_avoids_the_hunter_trap() -> void:
-	# The black rook's only capture lands on the trap: it would lose itself for a pawn.
-	var board := _board({
-		Vector2i(2, 0): PieceFactory.make(Type.ROOK, Team.BLACK),
-		Vector2i(2, 3): PieceFactory.make(Type.PAWN, Team.WHITE),
-		Vector2i(4, 4): PieceFactory.make(Type.KNIGHT, Team.WHITE),
-	}, {Vector2i(2, 3): HUNTER})
-	
-	var move := ChessAI.choose_move(board, Team.BLACK, 1)
-	
-	assert_ne(move.to, Vector2i(2, 3))
-	assert_false(board.is_empty(Vector2i(2, 0)), "the search left the board as it was")
-
-
-# --- In the arena ---
+# --- Effects in the arena (like the original game) ---
 
 func _arena_with_tiles(placed: Dictionary) -> Arena:
 	var arena := ArenaHelper.create_arena(self)
@@ -114,42 +83,111 @@ func _arena_with_tiles(placed: Dictionary) -> Arena:
 	return arena
 
 
-func test_enemy_moving_onto_a_hunter_tile_is_destroyed() -> void:
-	var arena := _arena_with_tiles({Vector2i(1, 2): HUNTER})
-	ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
+func test_protective_tile_protects_during_the_enemy_turn_only() -> void:
+	var arena := _arena_with_tiles({Vector2i(4, 3): PROTECTION})
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
 	arena.preparation.start_battle()
-	arena.turn_manager.end_turn(arena.board.unit_grid.to_board_state())
+	
+	arena.unit_mover.perform_board_move(pawn, Vector2i(4, 4), Vector2i(4, 3))
+	assert_true(pawn.is_protected, "protected during the enemy turn")
+	assert_eq(arena.turn_manager.current_team, Team.BLACK)
+	
+	arena.unit_mover.end_turn()
+	
+	assert_false(pawn.is_protected, "gone on the player's next turn")
+
+
+func test_blessed_piece_returns_to_the_stock_when_captured() -> void:
+	var arena := _arena_with_tiles({Vector2i(2, 3): BENEDICTION})
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(2, 4))
+	arena.preparation.start_battle()
+	arena.unit_mover.perform_board_move(pawn, Vector2i(2, 4), Vector2i(2, 3))
+	assert_true(pawn.is_blessed)
+	# A black rook captures it.
+	var rook := ArenaHelper.place_unit(arena, Vector2i(2, 0), BLACK_ROOK)
+	var blocker: Unit = arena.board.unit_grid.units[Vector2i(2, 1)]
+	arena.board.unit_grid.remove_unit(Vector2i(2, 1))
+	blocker.free()
+	var bench_before: int = arena.get_node("Bench").unit_grid.get_all_units().size()
+	
+	arena.unit_mover.perform_board_move(rook, Vector2i(2, 0), Vector2i(2, 3))
+	
+	assert_eq(RunState.graveyard.size(), 0, "not lost")
+	assert_has(RunState.pieces, WHITE_PAWN)
+	assert_eq(arena.get_node("Bench").unit_grid.get_all_units().size(), bench_before + 1, "back on the bench")
+
+
+func test_trap_makes_the_enemy_skip_its_next_turn() -> void:
+	var arena := _arena_with_tiles({Vector2i(1, 2): HUNTER})
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
+	arena.preparation.start_battle()
+	arena.unit_mover.end_turn() # white waits
 	var black_pawn: Unit = arena.board.unit_grid.units[Vector2i(1, 1)]
-	watch_signals(arena.unit_mover)
 	
-	assert_true(arena.unit_mover.perform_board_move(black_pawn, Vector2i(1, 1), Vector2i(1, 2)))
+	arena.unit_mover.perform_board_move(black_pawn, Vector2i(1, 1), Vector2i(1, 2))
+	assert_true(black_pawn.is_trapped)
+	arena.unit_mover.perform_board_move(pawn, Vector2i(4, 4), Vector2i(4, 3))
 	
-	assert_true(black_pawn.is_queued_for_deletion())
-	assert_null(arena.board.unit_grid.units[Vector2i(1, 2)])
-	assert_signal_emitted_with_parameters(arena.unit_mover, "unit_captured", [black_pawn, null])
-	assert_eq(arena.captured_enemies, 1, "counts for the rewards")
-	assert_eq(arena.turn_manager.current_team, Team.WHITE)
+	assert_eq(arena.turn_manager.current_team, Team.BLACK)
+	assert_eq(MoveRules.get_legal_moves(arena.board.unit_grid.to_board_state(), Vector2i(1, 2)), [] as Array[Vector2i], "stuck this turn")
+	arena.unit_mover.end_turn()
+	assert_false(black_pawn.is_trapped, "free again afterwards")
 
 
-func test_benediction_pays_the_player() -> void:
-	var arena := _arena_with_tiles({Vector2i(4, 3): BENEDICTION})
+func test_trap_ignores_the_player_pieces() -> void:
+	var arena := _arena_with_tiles({Vector2i(4, 3): HUNTER})
 	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
 	arena.preparation.start_battle()
 	
 	arena.unit_mover.perform_board_move(pawn, Vector2i(4, 4), Vector2i(4, 3))
 	
-	assert_eq(RunState.money, SpecialTileData.BENEDICTION_MONEY)
+	assert_false(pawn.is_trapped)
 
 
-func test_benediction_also_pays_for_a_stock_piece_put_on_it() -> void:
-	var arena := _arena_with_tiles({Vector2i(3, 4): BENEDICTION})
-	ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(0, 4))
-	var knight: Unit = arena.get_node("Bench").unit_grid.units[Vector2i(0, 1)]
+func test_phantom_tile_adds_a_temporary_copy_to_the_stock() -> void:
+	var arena := _arena_with_tiles({Vector2i(4, 3): PHANTOM})
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
+	var bench_grid: UnitGrid = arena.get_node("Bench").unit_grid
 	arena.preparation.start_battle()
 	
-	assert_true(arena.unit_mover.perform_deploy(knight, Vector2i(3, 4)))
+	arena.unit_mover.perform_board_move(pawn, Vector2i(4, 4), Vector2i(4, 3))
 	
-	assert_eq(RunState.money, SpecialTileData.BENEDICTION_MONEY)
+	var copies := bench_grid.get_all_units().filter(func(u: Unit) -> bool: return u.is_temporary)
+	assert_eq(copies.size(), 1)
+	assert_eq(copies[0].stats, WHITE_PAWN)
+	assert_eq(RunState.pieces.count(WHITE_PAWN), 1, "the copy is not added to the run")
+
+
+func test_phantom_tile_works_once_per_battle() -> void:
+	var arena := _arena_with_tiles({Vector2i(4, 3): PHANTOM})
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(4, 4))
+	arena.preparation.start_battle()
+	
+	arena.tile_effects._on_unit_landed(pawn, Vector2i(4, 3))
+	arena.tile_effects._on_unit_landed(pawn, Vector2i(4, 3))
+	
+	var copies := (arena.get_node("Bench").unit_grid as UnitGrid).get_all_units().filter(func(u: Unit) -> bool: return u.is_temporary)
+	assert_eq(copies.size(), 1)
+
+
+func test_captured_phantom_copy_just_vanishes() -> void:
+	var arena := ArenaHelper.create_arena(self)
+	var copy := ArenaHelper.place_unit(arena, Vector2i(2, 2), WHITE_PAWN)
+	copy.is_temporary = true
+	
+	arena._on_unit_captured(copy, null)
+	
+	assert_eq(RunState.graveyard.size(), 0)
+
+
+func test_tooltip_lists_statuses() -> void:
+	var arena := ArenaHelper.create_arena(self)
+	var pawn := ArenaHelper.move_to_board(arena, Vector2i(0, 0), Vector2i(2, 4))
+	pawn.is_blessed = true
+	pawn.is_protected = true
+	
+	assert_string_contains(UnitTooltip.get_status_text(pawn), "Blessed")
+	assert_string_contains(UnitTooltip.get_status_text(pawn), "Protected")
 
 
 func test_placed_tiles_come_back_every_battle() -> void:
@@ -166,7 +204,6 @@ func test_tal_never_curses_a_special_tile() -> void:
 	var arena: Arena = preload("res://scenes/arena/arena.tscn").instantiate()
 	arena.encounter = ArenaHelper.three_pawns()
 	arena.boss = preload("res://data/bosses/tal_the_cursed.tres")
-	# Fill every empty tile but a few with special tiles.
 	for x in 5:
 		for y in [2, 3, 4]:
 			RunState.placed_tiles[Vector2i(x, y)] = PROTECTION

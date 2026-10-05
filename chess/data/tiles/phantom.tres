@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_tile")
 display_name = "Phantom"
-description = "Enemy pieces can't enter or pass through."
+description = "Your piece moving here leaves a phantom copy in your Stock for this battle."
 effect = 3
 price = 4
 texture = ExtResource("2_tex")

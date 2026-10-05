@@ -32,7 +32,7 @@ func spawn_unit(unit: UnitStats) -> void:
 	spawn_unit_at(unit, area, area.unit_grid.get_first_empty_tile())
 
 
-func spawn_unit_at(unit: UnitStats, area: PlayArea, tile: Vector2i) -> void:
+func spawn_unit_at(unit: UnitStats, area: PlayArea, tile: Vector2i) -> Unit:
 	assert(not area.unit_grid.is_tile_occupied(tile), "Tile %s is already occupied!" % tile)
 	
 	var new_unit := UNIT.instantiate()
@@ -41,3 +41,4 @@ func spawn_unit_at(unit: UnitStats, area: PlayArea, tile: Vector2i) -> void:
 	new_unit.global_position = area.get_global_from_tile(tile)
 	new_unit.stats = unit
 	unit_spawned.emit(new_unit)
+	return new_unit
